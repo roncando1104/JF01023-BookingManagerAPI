@@ -1,0 +1,31 @@
+spring:
+  jackson:
+    serialization:
+      indent-output: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: ron1104
+    max-active: 1
+    initialSize: 1
+    tomcat:
+      initial-size: 1
+      testOnBorrow: true
+      validationQuery: SELECT 1
+    maxIdle: 1
+    hikari:
+      minimumIdle: 2
+      maximumPoolSize: 10
+      connectionTimeout: 120000
+      idleTimeout: 300000
+      leakDetectionThreshold: 300000
+  jpa:
+    hibernate:
+      naming:
+        naming_strategy: org.hibernate.cfg.EJB3NamingStrategy
+
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
