@@ -1,0 +1,43 @@
+spring:
+  jackson:
+    serialization:
+      indent-output: true
+  datasource:
+    url: jdbc:h2:mem:test;MODE=MySQL;
+    username:
+    password:
+    max-active: 1
+    initialSize: 1
+    tomcat:
+      initial-size: 1
+      testOnBorrow: true
+      validationQuery: SELECT 1
+    maxIdle: 1
+    hikari:
+      minimumIdle: 2
+      maximumPoolSize: 10
+      connectionTimeout: 120000
+      idleTimeout: 300000
+      leakDetectionThreshold: 300000
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: update
+
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+        format_sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always

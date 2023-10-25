@@ -13,7 +13,7 @@ import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.model.Reservation;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationStatusEnum;
 import com.jfcm.manda.bookingmanagerapi.repository.ReservationRepository;
-import com.jfcm.manda.bookingmanagerapi.services.RequestDataService;
+import com.jfcm.manda.bookingmanagerapi.service.RequestDataService;
 import com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil;
 import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
 import java.math.BigDecimal;
