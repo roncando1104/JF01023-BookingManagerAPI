@@ -6,13 +6,14 @@
  *  This software is the confidential and proprietary information of
  *  ING Group ("Confidential Information").
  */
-package com.jfcm.manda.bookingmanagerapi.resources;
+package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.model.Reservation;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationStatusEnum;
 import com.jfcm.manda.bookingmanagerapi.repository.ReservationRepository;
+import com.jfcm.manda.bookingmanagerapi.service.GenerateUUIDService;
 import com.jfcm.manda.bookingmanagerapi.service.RequestDataService;
 import com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil;
 import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
@@ -36,6 +37,7 @@ public class ReservationResources {
   private Utilities utilities;
   @Autowired
   private RequestDataService requestDataService;
+  @Autowired GenerateUUIDService generateUUIDService;
 
   /*
   {
@@ -55,7 +57,7 @@ public class ReservationResources {
   @PostMapping(value = "/add-reservation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> addReservation(@RequestBody String input) throws JsonProcessingException {
     Reservation data = utilities.readfromInput(input, Reservation.class);
-    String bookingId = UUID.randomUUID().toString();
+    String bookingId = generateUUIDService.generateUUID();
     String totalFee;
     String clientId = requestDataService.getClientIdByName(data.getBookedBy());
 

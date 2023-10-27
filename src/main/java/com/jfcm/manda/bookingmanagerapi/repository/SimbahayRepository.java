@@ -11,11 +11,12 @@ package com.jfcm.manda.bookingmanagerapi.repository;
 import com.jfcm.manda.bookingmanagerapi.model.SimbahayGroups;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SimbahayRepository extends CrudRepository<SimbahayGroups, String> {
+public interface SimbahayRepository extends JpaRepository<SimbahayGroups, String> {
 
   Optional<SimbahayGroups> findById(String id);
   List<SimbahayGroups> findAll();

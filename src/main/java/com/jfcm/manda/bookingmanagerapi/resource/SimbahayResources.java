@@ -6,7 +6,7 @@
  *  This software is the confidential and proprietary information of
  *  ING Group ("Confidential Information").
  */
-package com.jfcm.manda.bookingmanagerapi.resources;
+package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.model.SimbahayGroups;

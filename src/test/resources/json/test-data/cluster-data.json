@@ -1,0 +1,25 @@
+[ {
+  "clusterCode" : "cluster-001",
+  "clusterName" : "Cluster 1",
+  "clusterLeader1" : "Jojo Miranda",
+  "clusterLeader2" : "Victor Lim",
+  "totalSimbahay" : 4
+}, {
+  "clusterCode" : "cluster-002",
+  "clusterName" : "Cluster 2",
+  "clusterLeader1" : "Ronald Cando",
+  "clusterLeader2" : "Dennis Tuando",
+  "totalSimbahay" : 4
+}, {
+  "clusterCode" : "cluster-003",
+  "clusterName" : "Cluster 3",
+  "clusterLeader1" : "Colo Jayona",
+  "clusterLeader2" : "Romeo Bunag",
+  "totalSimbahay" : 4
+}, {
+  "clusterCode" : "cluster-004",
+  "clusterName" : "Cluster 4",
+  "clusterLeader1" : "Jordan Panagsagan",
+  "clusterLeader2" : "Ting Santos",
+  "totalSimbahay" : 4
+} ]
