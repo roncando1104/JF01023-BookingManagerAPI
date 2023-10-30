@@ -23,7 +23,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "clusters")
-public class Clusters {
+public class ClusterGroupsEntity {
 
   /*
   cluster_code varchar [primary key]

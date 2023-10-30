@@ -9,7 +9,7 @@
 package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
-import com.jfcm.manda.bookingmanagerapi.model.SimbahayGroups;
+import com.jfcm.manda.bookingmanagerapi.model.SimbahayGroupsEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.SimbahayRepository;
 import com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil;
 import java.util.List;
@@ -34,20 +34,20 @@ public class SimbahayResources {
 
   @GetMapping(value = "/simbahay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getAllSimbahays() {
-    List<SimbahayGroups> data = simbahayRepository.findAll();
+    List<SimbahayGroupsEntity> data = simbahayRepository.findAll();
 
     return ResponseUtil.generateResponse(String.format("Data retrieved successfully. %s record(s)", data.size()), HttpStatus.OK, data, Constants.TRANSACTION_SUCCESS);
   }
 
   @GetMapping(value = "/simbahay/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getSimbahayById(@PathVariable(value = "id") String id) {
-    Optional<SimbahayGroups> data = simbahayRepository.findById(id);
+    Optional<SimbahayGroupsEntity> data = simbahayRepository.findById(id);
 
     return ResponseUtil.generateResponse(String.format("Simbahay with id %s successfully retrieved", id), HttpStatus.OK, data, Constants.TRANSACTION_SUCCESS);
   }
 
   @PostMapping(value = "/add-simbahay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> addSimbahayGroup(@RequestBody SimbahayGroups data) {
+  public ResponseEntity<Object> addSimbahayGroup(@RequestBody SimbahayGroupsEntity data) {
     simbahayRepository.save(data);
 
     return ResponseUtil.generateResponse("New simbahay group successfully created!", HttpStatus.OK, data, Constants.TRANSACTION_SUCCESS);
@@ -62,9 +62,9 @@ public class SimbahayResources {
   }
 
   @PutMapping(value = "/update-simbahay/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> updateSimbahayById(@RequestBody SimbahayGroups simbahayGrp, @PathVariable String id) {
+  public ResponseEntity<Object> updateSimbahayById(@RequestBody SimbahayGroupsEntity simbahayGrp, @PathVariable String id) {
 
-    Optional<SimbahayGroups> simbahayById = simbahayRepository.findById(id);
+    Optional<SimbahayGroupsEntity> simbahayById = simbahayRepository.findById(id);
 
     if (simbahayById.isEmpty()) {
       return ResponseUtil.generateResponse(String.format("Simbahay with id %s doesn't exist", id), HttpStatus.NOT_FOUND, String.format("id %s not found", id), Constants.TRANSACTION_FAILED);

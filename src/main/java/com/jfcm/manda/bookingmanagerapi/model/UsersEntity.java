@@ -1,5 +1,5 @@
 /*
- *  SimbahayGroups.java
+ *  users.java
  *
  *  Copyright © 2023 ING Group. All rights reserved.
  *
@@ -8,6 +8,7 @@
  */
 package com.jfcm.manda.bookingmanagerapi.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -15,6 +16,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 
 @Data
@@ -22,38 +24,39 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "simbahay_grp")
-public class SimbahayGroups {
+@Table(name = "users")
+public class UsersEntity {
 
   /*
   id integer [primary key]
-  simbahay_name varchar
-  simbahay_sched varchar
+  first_name varchar
+  middle_name varchar
+  last_name varchar
+  role varchar
   cluster varchar
-  cluster_code varchar
-  simbahay_leader1 varchar
-  simbahay_leader2 varchar
-  total_members integer
-  location varchar
-  status varchar
-  */
+  cluster_code varchar */
 
   @Id
   private String id;
-  @Column(name = "simbahay_name")
-  private String simbahayName;
-  @Column(name = "simbahay_sched")
-  private String simbahaySchedule;
+  @JsonProperty(required = true)
+  @NonNull
+  @Column(name = "first_name")
+  private String firstName;
+  @Column(name = "middle_name")
+  private String middleName;
+  @JsonProperty(required = true)
+  @NonNull
+  @Column(name = "last_name")
+  private String lastName;
+  @JsonProperty(required = true)
+  @NonNull
+  private String role;
+  @JsonProperty(required = true)
+  @NonNull
   private String cluster;
+  @JsonProperty(required = true)
+  @NonNull
   @Column(name = "cluster_code")
   private String clusterCode;
-  @Column(name = "simbahay_leader1")
-  private String simbahayLeader1;
-  @Column(name = "simbahay_leader2")
-  private String simbahayLeader2;
-  @Column(name = "total_members")
-  private int totalMembers;
-  private String location;
-  private String status;
 
 }

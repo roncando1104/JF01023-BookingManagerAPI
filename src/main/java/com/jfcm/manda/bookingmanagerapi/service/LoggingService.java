@@ -45,27 +45,27 @@ public class LoggingService {
     return mapper.writeValueAsString(map);
   }
 
-  public void infoLog(String uuid, String component, String message, String info) throws JsonProcessingException {
+  public void info(String uuid, String component, String message, String info) throws JsonProcessingException {
     stringMap = logMap(uuid, component, message, info);
     logger.info(stringMap);
   }
 
-  public void errorLog(String uuid, String component, String message, String info) throws JsonProcessingException {
+  public void error(String uuid, String component, String message, String info) throws JsonProcessingException {
     stringMap = logMap(uuid, component, message, info);
     logger.error(stringMap);
   }
 
-  public void debugLog(String uuid, String component, String message, String info) throws JsonProcessingException {
+  public void debug(String uuid, String component, String message, String info) throws JsonProcessingException {
     stringMap = logMap(uuid, component, message, info);
     logger.debug(stringMap);
   }
 
-  public void warnLog(String uuid, String component, String message, String info) throws JsonProcessingException {
+  public void warn(String uuid, String component, String message, String info) throws JsonProcessingException {
     stringMap = logMap(uuid, component, message, info);
     logger.warn(stringMap);
   }
 
-  public void traceLog(String uuid, String component, String message, String info) throws JsonProcessingException {
+  public void trace(String uuid, String component, String message, String info) throws JsonProcessingException {
     stringMap = logMap(uuid, component, message, info);
     logger.trace(stringMap);
   }

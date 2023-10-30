@@ -15,7 +15,6 @@ import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
 import java.text.DecimalFormat;
 import java.util.Random;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +24,7 @@ public class Utilities {
   @Autowired
   private UsersRepository usersRepository;
 
-  public String getGeneratedId() {
+  public String getRandomGeneratedId() {
     Random rnd = new Random();
     int randomNum = 100000 + rnd.nextInt(999999);
     String generatedId;
@@ -44,7 +43,7 @@ public class Utilities {
   }
 
   public static String formatNumber(double value) {
-    DecimalFormat df = new DecimalFormat("#,##0.00");
+    DecimalFormat df = new DecimalFormat("###,###,###.00");
 
     return df.format(value);
   }

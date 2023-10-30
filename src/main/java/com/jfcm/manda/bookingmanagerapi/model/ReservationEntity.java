@@ -14,7 +14,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +28,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "reservation")
-public class Reservation {
+public class ReservationEntity {
 
   /*
   id integer [primary key]
@@ -46,6 +45,8 @@ public class Reservation {
   private String id;
   @Column(name = "booking_date")
   private LocalDate bookingDate;
+  @Column(name = "event_date")
+  private LocalDate eventDate;
   private String room;
   @Column(name = "group_name")
   private String groupName;
@@ -59,7 +60,7 @@ public class Reservation {
   @Column(name = "with_fee")
   private boolean withFee;
   @Column(name = "total_fee")
-  private BigDecimal totalFee;
+  private String totalFee;
   @Enumerated(EnumType.STRING)
   private ReservationStatusEnum status;
 

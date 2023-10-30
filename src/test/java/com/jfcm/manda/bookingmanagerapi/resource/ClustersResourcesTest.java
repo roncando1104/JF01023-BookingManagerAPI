@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.is;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jfcm.manda.bookingmanagerapi.model.Clusters;
+import com.jfcm.manda.bookingmanagerapi.model.ClusterGroupsEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.ClustersRepository;
 import com.jfcm.manda.bookingmanagerapi.utils.TestUtils;
 import jakarta.transaction.Transactional;
@@ -41,7 +41,7 @@ class ClustersResourcesTest {
 
   @Test
   void testGetAllClusterGroups() throws Exception {
-    List<Clusters> clustersData = TestUtils.readFileValue(mapper,
+    List<ClusterGroupsEntity> clustersData = TestUtils.readFileValue(mapper,
         "json/test-data/cluster-data.json", List.class);
 
     mockMvc.perform(get("/all-cluster-groups")
@@ -60,7 +60,7 @@ class ClustersResourcesTest {
   @ParameterizedTest
   @ValueSource(strings = {"cluster-001", "cluster-000"})
   void testGetAllClusterGroupsById(String id) throws Exception {
-    Clusters clustersData;
+    ClusterGroupsEntity clustersData;
     String clusterId;
     String transactionMessage;
     String tranCode;
@@ -68,7 +68,7 @@ class ClustersResourcesTest {
     ResultMatcher resultMatcher;
     if (id.equals("cluster-001")) {
        clustersData = TestUtils.readFileValue(mapper,
-          "json/test-data/single-cluster-data.json", Clusters.class);
+          "json/test-data/single-cluster-data.json", ClusterGroupsEntity.class);
       assert(clustersRepository.findById("cluster-001").isPresent());
       clusterId = "cluster-001";
       transactionMessage = "successfully retrieved";
@@ -99,8 +99,8 @@ class ClustersResourcesTest {
 
   @Test
   void testAddClusterGroup() throws Exception {
-    Clusters clustersData = TestUtils.readFileValue(mapper,
-        "json/test-data/single-cluster-data.json", Clusters.class);
+    ClusterGroupsEntity clustersData = TestUtils.readFileValue(mapper,
+        "json/test-data/single-cluster-data.json", ClusterGroupsEntity.class);
 
     mockMvc.perform(post("/add-cluster")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -119,8 +119,8 @@ class ClustersResourcesTest {
 
   @Test
   void testDeleteClusterGroup() throws Exception {
-    Clusters clustersData = TestUtils.readFileValue(mapper,
-        "json/test-data/single-cluster-data.json", Clusters.class);
+    ClusterGroupsEntity clustersData = TestUtils.readFileValue(mapper,
+        "json/test-data/single-cluster-data.json", ClusterGroupsEntity.class);
 
     mockMvc.perform(delete("/delete-cluster-group/cluster-001")
             .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -137,7 +137,7 @@ class ClustersResourcesTest {
   @ParameterizedTest
   @ValueSource(strings = {"cluster-001", "cluster-000"})
   void testUpdateUserById(String id) throws Exception {
-    Clusters clustersData;
+    ClusterGroupsEntity clustersData;
     String clusterId;
     String transactionMessage;
     String tranCode;
@@ -145,7 +145,7 @@ class ClustersResourcesTest {
     ResultMatcher resultMatcher;
     if (id.equals("cluster-001")) {
       clustersData = TestUtils.readFileValue(mapper,
-          "json/test-data/single-cluster-data.json", Clusters.class);
+          "json/test-data/single-cluster-data.json", ClusterGroupsEntity.class);
       assert(clustersRepository.findById("cluster-001").isPresent());
       clusterId = "cluster-001";
       transactionMessage = "has been updated";
@@ -154,7 +154,7 @@ class ClustersResourcesTest {
       resultMatcher = status().isOk();
     } else {
       clustersData = TestUtils.readFileValue(mapper,
-          "json/test-data/single-cluster-data-for-update.json", Clusters.class);
+          "json/test-data/single-cluster-data-for-update.json", ClusterGroupsEntity.class);
       clusterId = "cluster-000";
       transactionMessage = "doesn't exist";
       tranCode = "TRN-001";

@@ -10,17 +10,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootTest
-class BookingmanagerapiApplicationTests {
+class BookingManagerAPIApplicationTests {
 
   @Test
   void testMainApplication() {
     try(MockedStatic<SpringApplication> mocked = mockStatic(SpringApplication.class)){
-      mocked.when(() -> { SpringApplication.run(BookingmanagerapiApplication.class,
+      mocked.when(() -> { SpringApplication.run(BookingManagerAPIApplication.class,
               "foo", "bar"); })
           .thenReturn(Mockito.mock(ConfigurableApplicationContext.class));
 
-      BookingmanagerapiApplication.main(new String[] { "foo", "bar"});
-      mocked.verify(() -> { SpringApplication.run(BookingmanagerapiApplication.class,
+      BookingManagerAPIApplication.main(new String[] { "foo", "bar"});
+      mocked.verify(() -> { SpringApplication.run(BookingManagerAPIApplication.class,
           "foo", "bar"); });
     }
   }

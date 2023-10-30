@@ -9,7 +9,7 @@
 package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
-import com.jfcm.manda.bookingmanagerapi.model.Users;
+import com.jfcm.manda.bookingmanagerapi.model.UsersEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
 import com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil;
 import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
@@ -38,22 +38,22 @@ public class UsersResources {
 
   @GetMapping(value = "/users", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getAllUsers() {
-    List<Users> data = usersRepository.findAll();
+    List<UsersEntity> data = usersRepository.findAll();
 
     return ResponseUtil.generateResponse(String.format("Data retrieved successfully. %s record(s)", data.size()), HttpStatus.OK, data, Constants.TRANSACTION_SUCCESS);
   }
 
   @GetMapping(value = "/user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getUserById(@PathVariable(value = "id") String id) {
-    Optional<Users> data = usersRepository.findById(id);
+    Optional<UsersEntity> data = usersRepository.findById(id);
 
     return ResponseUtil.generateResponse(String.format("data with id %s successfully retrieved", id), HttpStatus.OK, data, Constants.TRANSACTION_SUCCESS);
   }
 
   @PostMapping(value = "/add-user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> addUser(@RequestBody String user) throws IOException {
-    Users data = utilities.readfromInput(user, Users.class);
-    String generatedId = utilities.getGeneratedId();
+    UsersEntity data = utilities.readfromInput(user, UsersEntity.class);
+    String generatedId = utilities.getRandomGeneratedId();
     data.setId(generatedId);
     usersRepository.save(data);
 
@@ -69,9 +69,9 @@ public class UsersResources {
   }
 
   @PutMapping(value = "/update-user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> updateUserById(@RequestBody Users users, @PathVariable String id) {
+  public ResponseEntity<Object> updateUserById(@RequestBody UsersEntity users, @PathVariable String id) {
 
-    Optional<Users> user = usersRepository.findById(id);
+    Optional<UsersEntity> user = usersRepository.findById(id);
 
     if (user.isEmpty()) {
       return ResponseUtil.generateResponse(String.format("User with id %s doesn't exist", id), HttpStatus.NOT_FOUND, String.format("id %s not found", id), Constants.TRANSACTION_FAILED);

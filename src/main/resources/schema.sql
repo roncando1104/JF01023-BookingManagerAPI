@@ -15,6 +15,7 @@ CREATE TABLE `clusters` (
 CREATE TABLE `reservation`(
     `id` varchar(255),
     `booking_date` varchar(255),
+    `event_date` varchar(255),
     `room` varchar(255),
     `group_name` varchar(255),
     `group_code` varchar(255),
@@ -22,7 +23,7 @@ CREATE TABLE `reservation`(
     `booked_by` varchar(255),
     `client_id` varchar(255),
     `with_fee` varchar(255),
-    `total_fee` int,
+    `total_fee` varchar(255),
     `status` varchar(255),
     primary key (`id`)
 );

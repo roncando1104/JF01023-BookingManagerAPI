@@ -8,17 +8,16 @@
  */
 package com.jfcm.manda.bookingmanagerapi.repository;
 
-import com.jfcm.manda.bookingmanagerapi.model.SimbahayGroups;
+import com.jfcm.manda.bookingmanagerapi.model.SimbahayGroupsEntity;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SimbahayRepository extends JpaRepository<SimbahayGroups, String> {
+public interface SimbahayRepository extends JpaRepository<SimbahayGroupsEntity, String> {
 
-  Optional<SimbahayGroups> findById(String id);
-  List<SimbahayGroups> findAll();
+  Optional<SimbahayGroupsEntity> findById(String id);
+  List<SimbahayGroupsEntity> findAll();
   void deleteById(String id);
 }

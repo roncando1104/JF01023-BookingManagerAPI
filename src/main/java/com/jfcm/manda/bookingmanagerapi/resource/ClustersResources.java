@@ -10,7 +10,7 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
-import com.jfcm.manda.bookingmanagerapi.model.Clusters;
+import com.jfcm.manda.bookingmanagerapi.model.ClusterGroupsEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.ClustersRepository;
 import com.jfcm.manda.bookingmanagerapi.service.GenerateUUIDService;
 import com.jfcm.manda.bookingmanagerapi.service.LoggingService;
@@ -35,13 +35,13 @@ public class ClustersResources {
   @Autowired
   private ClustersRepository clustersRepository;
   @Autowired
-  private LoggingService loggingService;
+  private LoggingService LOG;
   @Autowired
   private GenerateUUIDService generateUUIDService;
 
   @GetMapping(value = "/all-cluster-groups", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getAllClusterGroups() {
-    List<Clusters> data = clustersRepository.findAll();
+    List<ClusterGroupsEntity> data = clustersRepository.findAll();
 
     return ResponseUtil.generateResponse(String.format("Data retrieved successfully. %s record(s)", data.size()), HttpStatus.OK, data, Constants.TRANSACTION_SUCCESS);
   }
@@ -49,7 +49,7 @@ public class ClustersResources {
   @GetMapping(value = "/cluster/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getClusterById(@PathVariable(value = "id") String id) {
     var isIdExist = clustersRepository.existsById(id);
-    Optional<Clusters> data = clustersRepository.findById(id);
+    Optional<ClusterGroupsEntity> data = clustersRepository.findById(id);
 
     if (isIdExist) {
       return ResponseUtil.generateResponse(String.format("data with id %s successfully retrieved", id), HttpStatus.OK, data, Constants.TRANSACTION_SUCCESS);
@@ -59,7 +59,7 @@ public class ClustersResources {
     }
 
   @PostMapping(value = "/add-cluster", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> addClusterGroup(@RequestBody Clusters data) {
+  public ResponseEntity<Object> addClusterGroup(@RequestBody ClusterGroupsEntity data) {
     clustersRepository.save(data);
 
     return ResponseUtil.generateResponse("New cluster group successfully created!", HttpStatus.CREATED, data, Constants.TRANSACTION_SUCCESS);
@@ -74,18 +74,18 @@ public class ClustersResources {
   }
 
   @PutMapping(value = "/update-cluster-group/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> updateUserById(@RequestBody Clusters data, @PathVariable String id) throws JsonProcessingException {
+  public ResponseEntity<Object> updateUserById(@RequestBody ClusterGroupsEntity data, @PathVariable String id) throws JsonProcessingException {
 
-    Optional<Clusters> user = clustersRepository.findById(id);
+    Optional<ClusterGroupsEntity> user = clustersRepository.findById(id);
 
     if (user.isEmpty()) {
-      loggingService.errorLog(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Cluster with id %s doesn't exist", id), Constants.TRANSACTION_FAILED);
+      LOG.error(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Cluster with id %s doesn't exist", id), Constants.TRANSACTION_FAILED);
 
       return ResponseUtil.generateResponse(String.format("Cluster with id %s doesn't exist", id), HttpStatus.NOT_FOUND, data, Constants.TRANSACTION_FAILED);
     }
     data.setClusterCode(id);
     clustersRepository.save(data);
-    loggingService.infoLog(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Cluster with id %s has been updated", id), Constants.TRANSACTION_SUCCESS);
+    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Cluster with id %s has been updated", id), Constants.TRANSACTION_SUCCESS);
 
     return ResponseUtil.generateResponse(String.format("Cluster with id %s has been updated", id), HttpStatus.OK, data, Constants.TRANSACTION_SUCCESS);
   }

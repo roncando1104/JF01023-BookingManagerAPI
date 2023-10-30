@@ -8,20 +8,19 @@
  */
 package com.jfcm.manda.bookingmanagerapi.repository;
 
-import com.jfcm.manda.bookingmanagerapi.model.Users;
+import com.jfcm.manda.bookingmanagerapi.model.UsersEntity;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, String> {
+public interface UsersRepository extends JpaRepository<UsersEntity, String> {
 
-  Optional<Users> findById(String id);
-  List<Users> findAll();
+  Optional<UsersEntity> findById(String id);
+  List<UsersEntity> findAll();
   void deleteById(String id);
 
   @Query(nativeQuery = true,
