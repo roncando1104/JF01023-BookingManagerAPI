@@ -24,6 +24,8 @@ spring:
     console.enabled: true
   jpa:
     hibernate:
+      hbm2ddl:
+        auto: create
       naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl

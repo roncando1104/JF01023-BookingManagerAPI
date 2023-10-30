@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS `simbahay_grp`;
 DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `clusters` (
-    `cluster_code` varchar,
+    `cluster_code` varchar NOT NULL UNIQUE,
     `cluster_name` varchar(255),
     `cluster_leader1` varchar(255),
     `cluster_leader2` varchar(255),
@@ -13,7 +13,7 @@ CREATE TABLE `clusters` (
 );
 
 CREATE TABLE `reservation`(
-    `id` varchar(255),
+    `id` varchar(255) NOT NULL UNIQUE,
     `booking_date` varchar(255),
     `room` varchar(255),
     `group_name` varchar(255),
@@ -28,7 +28,7 @@ CREATE TABLE `reservation`(
 );
 
 CREATE TABLE `simbahay_grp`(
-    `id` varchar,
+    `id` varchar NOT NULL UNIQUE,
     `simbahay_name` varchar(255),
     `simbahay_sched` varchar(255),
     `cluster` varchar(255),
@@ -42,7 +42,7 @@ CREATE TABLE `simbahay_grp`(
 );
 
 CREATE TABLE `users`(
-    `id` varchar,
+    `id` varchar NOT NULL UNIQUE,
     `first_name` varchar(255),
     `middle_name` varchar(255),
     `last_name` varchar(255),

@@ -1,3 +1,8 @@
+DELETE FROM CLUSTERS;
+DELETE FROM RESERVATION;
+DELETE FROM SIMBAHAY_GRP;
+DELETE FROM USERS;
+
 INSERT INTO clusters (cluster_code, cluster_name, cluster_leader1, cluster_leader2, total_simbahay) VALUES('cluster-001', 'Cluster 1', 'Jojo Miranda', 'Victor Lim', 4);
 INSERT INTO clusters (cluster_code, cluster_name, cluster_leader1, cluster_leader2, total_simbahay) VALUES('cluster-002', 'Cluster 2', 'Ronald Cando', 'Dennis Tuando', 4);
 INSERT INTO clusters (cluster_code, cluster_name, cluster_leader1, cluster_leader2, total_simbahay) VALUES('cluster-003', 'Cluster 3', 'Colo Jayona', 'Romeo Bunag', 4);
