@@ -7,3 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] (2023-10-25)
 - Created initial logic for booking manager
 - TODO: Add UTs
+
+## [1.0.1] (2023-11-01)
+- Enabled OpenAPI Swagger UI
+- Added Booking-Manager-API-1.0.0.yaml file
+- Added Reservation Resources endpoint for booking
+- Added some UTs
