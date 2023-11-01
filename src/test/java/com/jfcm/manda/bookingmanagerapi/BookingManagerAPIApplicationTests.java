@@ -24,5 +24,4 @@ class BookingManagerAPIApplicationTests {
           "foo", "bar"); });
     }
   }
-
 }

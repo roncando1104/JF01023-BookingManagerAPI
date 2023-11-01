@@ -13,6 +13,7 @@ import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.ReservationRepository;
 import com.jfcm.manda.bookingmanagerapi.service.CreateReservationData;
+import com.jfcm.manda.bookingmanagerapi.service.impl.CreateReservationDataImpl;
 import com.jfcm.manda.bookingmanagerapi.service.GenerateUUIDService;
 import com.jfcm.manda.bookingmanagerapi.service.LoggingService;
 import com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil;
@@ -56,7 +57,7 @@ public class ReservationResources {
   */
   @PostMapping(value = "/add-reservation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> addReservation(@RequestBody String input) throws JsonProcessingException {
-    ReservationEntity data = createReservationData.reservationData(input);
+    ReservationEntity data = createReservationData.getReservationData(input);
 
     Executor executor = Executors.newCachedThreadPool();
     CompletableFuture.supplyAsync(() -> reservationRepository.save(data), executor);

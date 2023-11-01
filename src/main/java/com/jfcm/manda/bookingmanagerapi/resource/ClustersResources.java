@@ -10,6 +10,7 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
+import com.jfcm.manda.bookingmanagerapi.exception.RecordNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.model.ClusterGroupsEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.ClustersRepository;
 import com.jfcm.manda.bookingmanagerapi.service.GenerateUUIDService;
@@ -80,7 +81,6 @@ public class ClustersResources {
 
     if (user.isEmpty()) {
       LOG.error(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Cluster with id %s doesn't exist", id), Constants.TRANSACTION_FAILED);
-
       return ResponseUtil.generateResponse(String.format("Cluster with id %s doesn't exist", id), HttpStatus.NOT_FOUND, data, Constants.TRANSACTION_FAILED);
     }
     data.setClusterCode(id);

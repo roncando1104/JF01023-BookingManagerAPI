@@ -1,0 +1,368 @@
+openapi: 3.0.1
+info:
+  title: Booking Manager API
+  description: Booking Data Rest for Room Reservation
+  termsOfService: Terms of Services...
+  contact:
+    name: JFCM Mandaluyong
+    url: http://jfcm-manda/dummy/url
+    email: ron.cando04@gmail.com
+  license:
+    name: Booking Manager API 1.0.0
+    url: http://jfcm-manda/dummy/url
+  version: 1.0.0
+servers:
+- url: http://localhost:8080/
+  description: LOCAL ENV
+paths:
+  /update-user/{id}:
+    put:
+      tags:
+      - users-resources
+      operationId: updateUserById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsersEntity'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /update-simbahay/{id}:
+    put:
+      tags:
+      - simbahay-resources
+      operationId: updateSimbahayById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimbahayGroupsEntity'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /update-cluster-group/{id}:
+    put:
+      tags:
+      - clusters-resources
+      operationId: updateUserById_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClusterGroupsEntity'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /add-user:
+    post:
+      tags:
+      - users-resources
+      operationId: addUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /add-simbahay:
+    post:
+      tags:
+      - simbahay-resources
+      operationId: addSimbahayGroup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimbahayGroupsEntity'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /add-reservation:
+    post:
+      tags:
+      - reservation-resources
+      operationId: addReservation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /add-cluster:
+    post:
+      tags:
+      - clusters-resources
+      operationId: addClusterGroup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClusterGroupsEntity'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /users:
+    get:
+      tags:
+      - users-resources
+      operationId: getAllUsers
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /user/{id}:
+    get:
+      tags:
+      - users-resources
+      operationId: getUserById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /simbahay:
+    get:
+      tags:
+      - simbahay-resources
+      operationId: getAllSimbahays
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /simbahay/{id}:
+    get:
+      tags:
+      - simbahay-resources
+      operationId: getSimbahayById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /cluster/{id}:
+    get:
+      tags:
+      - clusters-resources
+      operationId: getClusterById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /all-cluster-groups:
+    get:
+      tags:
+      - clusters-resources
+      operationId: getAllClusterGroups
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /delete-user/{id}:
+    delete:
+      tags:
+      - users-resources
+      operationId: deleteMember
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /delete-simbahay/{id}:
+    delete:
+      tags:
+      - simbahay-resources
+      operationId: deleteSimbahay
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /delete-cluster-group/{id}:
+    delete:
+      tags:
+      - clusters-resources
+      operationId: deleteClusterGroup
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  schemas:
+    UsersEntity:
+      required:
+      - cluster
+      - clusterCode
+      - firstName
+      - lastName
+      - role
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+        cluster:
+          type: string
+        clusterCode:
+          type: string
+    SimbahayGroupsEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        simbahayName:
+          type: string
+        simbahaySchedule:
+          type: string
+        cluster:
+          type: string
+        clusterCode:
+          type: string
+        simbahayLeader1:
+          type: string
+        simbahayLeader2:
+          type: string
+        totalMembers:
+          type: integer
+          format: int32
+        location:
+          type: string
+        status:
+          type: string
+    ClusterGroupsEntity:
+      type: object
+      properties:
+        clusterCode:
+          type: string
+        clusterName:
+          type: string
+        clusterLeader1:
+          type: string
+        clusterLeader2:
+          type: string
+        totalSimbahay:
+          type: integer
+          format: int32

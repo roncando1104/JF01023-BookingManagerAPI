@@ -41,7 +41,7 @@ public class LoggingService {
     if (StringUtils.isNotEmpty(uuid)) {
       map.put(info.contains("TRN") ? "tranCode" : "additionalInfo", info);
     }
-
+    //return map.toString();
     return mapper.writeValueAsString(map);
   }
 
