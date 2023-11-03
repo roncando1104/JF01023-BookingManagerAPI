@@ -13,8 +13,6 @@ import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.exception.DataAlreadyExistException;
 import com.jfcm.manda.bookingmanagerapi.model.AvailabilityCalendarEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.AvailableDateRepository;
-import com.jfcm.manda.bookingmanagerapi.service.GenerateUUIDService;
-import com.jfcm.manda.bookingmanagerapi.service.LoggingService;
 import com.jfcm.manda.bookingmanagerapi.service.PersistYearlyDates;
 import java.time.LocalDate;
 import java.time.Month;

@@ -13,9 +13,8 @@ import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.ReservationRepository;
 import com.jfcm.manda.bookingmanagerapi.service.CreateReservationData;
-import com.jfcm.manda.bookingmanagerapi.service.impl.CreateReservationDataImpl;
-import com.jfcm.manda.bookingmanagerapi.service.GenerateUUIDService;
-import com.jfcm.manda.bookingmanagerapi.service.LoggingService;
+import com.jfcm.manda.bookingmanagerapi.service.impl.GenerateUUIDService;
+import com.jfcm.manda.bookingmanagerapi.service.impl.LoggingService;
 import com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -26,9 +25,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/booking-api/v1/reservations")
 public class ReservationResources {
 
   @Autowired

@@ -47,8 +47,17 @@ CREATE TABLE `users`(
     `first_name` varchar(255),
     `middle_name` varchar(255),
     `last_name` varchar(255),
+    `email_add` varchar(255),
+    `contact_number` varchar(255),
+    `address` varchar(255),
+    `birthday` varchar(255),
     `role` varchar(255),
+    `status` varchar(255),
     `cluster` varchar(255),
     `cluster_code` varchar(255),
+    `simbahay_name` varchar(255),
+    `simbahay_code` varchar(255),
+    `user_name` varchar(255),
+    `password` varchar(255),
     primary key (`id`)
 );

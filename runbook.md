@@ -5,7 +5,7 @@
 
 | Package           | Old Version | New Version |
 |-------------------|-------------|-------------|
-| BookingManagerAPI | 1.0.0       | 1.0.1       |
+| BookingManagerAPI | 1.0.1       | 1.0.2       |
 
 #### Git Repository
 * Go to: https://github.com/roncando1104/JF01023-BookingManagerAPI

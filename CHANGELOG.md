@@ -13,3 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Booking-Manager-API-1.0.0.yaml file
 - Added Reservation Resources endpoint for booking
 - Added some UTs
+
+## [1.0.2] (2023-11-03)
+- Added JWT Authentication and Spring Security
+- Added the ff. Java Classes:
+  - JwtAuthenticationFilter
+  - SecurityConfig
+  - dao package
+  - Extended UserDetails in UserEntity
+  - UserAuthenTicationResources
+  - AuthenticationService
+  - JwtService
+- Modified the responses of resources
+- Added CSV report template

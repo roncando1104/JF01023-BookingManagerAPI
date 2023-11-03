@@ -1,3 +1,8 @@
+DELETE FROM CLUSTERS;
+DELETE FROM RESERVATION;
+DELETE FROM SIMBAHAY_GRP;
+DELETE FROM USERS;
+
 INSERT INTO clusters (cluster_code, cluster_name, cluster_leader1, cluster_leader2, total_simbahay) VALUES('cluster-001', 'Cluster 1', 'Jojo Miranda', 'Victor Lim', 4);
 INSERT INTO clusters (cluster_code, cluster_name, cluster_leader1, cluster_leader2, total_simbahay) VALUES('cluster-002', 'Cluster 2', 'Ronald Cando', 'Dennis Tuando', 4);
 INSERT INTO clusters (cluster_code, cluster_name, cluster_leader1, cluster_leader2, total_simbahay) VALUES('cluster-003', 'Cluster 3', 'Colo Jayona', 'Romeo Bunag', 4);
@@ -13,7 +18,7 @@ INSERT INTO simbahay_grp(id, simbahay_name, simbahay_sched, cluster, cluster_cod
 INSERT INTO simbahay_grp(id, simbahay_name, simbahay_sched, cluster, cluster_code, simbahay_leader1, simbahay_leader2, total_members, location, status) VALUES('SMBHY-023123', 'Tuesday Group', 'Tuesday 6:30PM', 'Cluster 3', 'cluster-003', 'Colo Jayona', 'Tony Star', 12, 'Mandaluyong', 'active' );
 INSERT INTO simbahay_grp(id, simbahay_name, simbahay_sched, cluster, cluster_code, simbahay_leader1, simbahay_leader2, total_members, location, status) VALUES('SMBHY-099231', 'Thursday Group', 'Thursday 8:30PM', 'Cluster 4', 'cluster-004', 'Jordan Panagsagan', 'Victor Lim', 12, 'Mandaluyong', 'active' );
 
-INSERT INTO users(id, first_name, middle_name, last_name, role, cluster, cluster_code) VALUES('JF-172775', 'Ronald', 'Collado', 'Cando', 'AE', 'Cluster 1', 'cluster-001');
-INSERT INTO users(id, first_name, middle_name, last_name, role, cluster, cluster_code) VALUES('JF-548943', 'Jojo', 'A', 'Miranda', 'AE', 'Cluster 2', 'cluster-002');
-INSERT INTO users(id, first_name, middle_name, last_name, role, cluster, cluster_code) VALUES('JF-166788', 'Colo', 'C', 'Jayona', 'AE', 'Cluster 3', 'cluster-003');
-INSERT INTO users(id, first_name, middle_name, last_name, role, cluster, cluster_code) VALUES('JF-112134', 'Victor', 'M', 'Lim', 'AE', 'Cluster 4', 'cluster-004');
+INSERT INTO users(id, first_name, middle_name, last_name, email_add, contact_number, address, birthday, role, status, cluster, cluster_code, simbahay_name, simbahay_code, user_name, password) VALUES('JF-172775', 'Ronald', 'Collado', 'Cando', 'ron.cando04@gmail.com', '09279471440', '4775 Guadalcanal st. Sta. Mesa, Manila', '1985-11-04', 'AE', 'ACTIVE', 'Cluster 1', 'cluster-001', 'Saturday Group', 'smbhy-007', 'ron1104', 'ron1104');
+INSERT INTO users(id, first_name, middle_name, last_name, email_add, contact_number, address, birthday, role, status, cluster, cluster_code, simbahay_name, simbahay_code, user_name, password) VALUES('JF-548943', 'Jojo', 'A', 'Miranda', 'jojomiranda@gmail.com', '09162341111', '111 Boni Ave. Mandaluyong', '1985-2-21', 'AE', 'ACTIVE', 'Cluster 2', 'cluster-002', 'Monday Group', 'smbhy-001', 'jojo1111', 'jojo1111');
+INSERT INTO users(id, first_name, middle_name, last_name, email_add, contact_number, address, birthday, role, status, cluster, cluster_code, simbahay_name, simbahay_code, user_name, password) VALUES('JF-166788', 'Colo', 'C', 'Jayona', 'colo@gmail.com', '09171112233', '123 Capitolyo, Pasig', '1982-05-12', 'AE', 'ACTIVE', 'Cluster 3', 'cluster-003', 'Thursday Group', 'smbhy-004', 'colo222', 'colo222');
+INSERT INTO users(id, first_name, middle_name, last_name, email_add, contact_number, address, birthday, role, status, cluster, cluster_code, simbahay_name, simbahay_code, user_name, password) VALUES('JF-112134', 'Victor', 'M', 'Lim', 'victorlim@gmail.com', '09193334444', '12 Sampaloc Manila', '1964-11-02', 'AE', 'ACTIVE', 'Cluster 4', 'cluster-004', 'Wednesday Group', 'smbhy-003', 'victor02', 'victor02');

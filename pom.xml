@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.jfcm.manda</groupId>
   <artifactId>BookingManagerAPI</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <name>BookingManagerAPI</name>
   <description>bookingmanagerapi</description>
   <packaging>jar</packaging>
@@ -38,6 +38,16 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-buildpack-platform</artifactId>
       <version>3.1.0</version>
     </dependency>
@@ -45,6 +55,22 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
       <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-api</artifactId>
+      <version>0.11.5</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-impl</artifactId>
+      <version>0.11.5</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-jackson</artifactId>
+      <version>0.11.5</version>
     </dependency>
 
     <dependency>
@@ -111,8 +137,34 @@
       <version>5.9.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-test</artifactId>
+      <version>3.1.5</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
+
+<!--  <dependencyManagement>-->
+<!--    <dependencies>-->
+<!--      <dependency>-->
+<!--        <groupId>io.jsonwebtoken</groupId>-->
+<!--        <artifactId>jjwt-api</artifactId>-->
+<!--        <version>0.11.5</version>-->
+<!--      </dependency>-->
+<!--      <dependency>-->
+<!--        <groupId>io.jsonwebtoken</groupId>-->
+<!--        <artifactId>jjwt-impl</artifactId>-->
+<!--        <version>0.11.5</version>-->
+<!--      </dependency>-->
+<!--      <dependency>-->
+<!--        <groupId>io.jsonwebtoken</groupId>-->
+<!--        <artifactId>jjwt-jackson</artifactId>-->
+<!--        <version>0.11.5</version>-->
+<!--      </dependency>-->
+<!--    </dependencies>-->
+<!--  </dependencyManagement>-->
 
   <build>
     <plugins>

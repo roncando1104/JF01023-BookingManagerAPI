@@ -6,5 +6,4 @@ import com.jfcm.manda.bookingmanagerapi.model.ReservationEntity;
 @FunctionalInterface
 public interface CreateReservationData {
   ReservationEntity getReservationData(String input) throws JsonProcessingException;
-
 }

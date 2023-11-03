@@ -6,7 +6,7 @@
  *  This software is the confidential and proprietary information of
  *  ING Group ("Confidential Information").
  */
-package com.jfcm.manda.bookingmanagerapi.service;
+package com.jfcm.manda.bookingmanagerapi.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +41,7 @@ public class LoggingService {
     if (StringUtils.isNotEmpty(uuid)) {
       map.put(info.contains("TRN") ? "tranCode" : "additionalInfo", info);
     }
-    //return map.toString();
+
     return mapper.writeValueAsString(map);
   }
 

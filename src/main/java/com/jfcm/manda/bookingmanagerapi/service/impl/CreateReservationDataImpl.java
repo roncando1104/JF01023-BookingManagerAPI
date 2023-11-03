@@ -12,8 +12,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationEntity;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationStatusEnum;
 import com.jfcm.manda.bookingmanagerapi.service.CreateReservationData;
-import com.jfcm.manda.bookingmanagerapi.service.GenerateUUIDService;
-import com.jfcm.manda.bookingmanagerapi.service.RequestDataService;
 import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
 import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;

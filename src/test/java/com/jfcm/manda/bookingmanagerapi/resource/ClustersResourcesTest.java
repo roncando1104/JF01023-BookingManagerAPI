@@ -9,19 +9,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.is;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jfcm.manda.bookingmanagerapi.config.JwtAuthenticationFilter;
 import com.jfcm.manda.bookingmanagerapi.model.ClusterGroupsEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.ClustersRepository;
+import com.jfcm.manda.bookingmanagerapi.service.impl.JwtServiceImpl;
 import com.jfcm.manda.bookingmanagerapi.utils.TestUtils;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -44,7 +52,7 @@ class ClustersResourcesTest {
     List<ClusterGroupsEntity> clustersData = TestUtils.readFileValue(mapper,
         "json/test-data/cluster-data.json", List.class);
 
-    mockMvc.perform(get("/all-cluster-groups")
+    mockMvc.perform(get("/booking-api/v1/record/all-cluster-groups")
         .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isOk())
         .andExpect(content()
@@ -85,7 +93,7 @@ class ClustersResourcesTest {
       assert(clustersRepository.findById("cluster-000").isEmpty());
     }
 
-    mockMvc.perform(get("/cluster/" + id)
+    mockMvc.perform(get("/booking-api/v1/record/cluster/" + id)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andDo(print())
         .andExpect(resultMatcher)
@@ -102,7 +110,7 @@ class ClustersResourcesTest {
     ClusterGroupsEntity clustersData = TestUtils.readFileValue(mapper,
         "json/test-data/single-cluster-data.json", ClusterGroupsEntity.class);
 
-    mockMvc.perform(post("/add-cluster")
+    mockMvc.perform(post("/booking-api/v1/record/add-cluster")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(mapper.writeValueAsString(clustersData))
             .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -122,7 +130,7 @@ class ClustersResourcesTest {
     ClusterGroupsEntity clustersData = TestUtils.readFileValue(mapper,
         "json/test-data/single-cluster-data.json", ClusterGroupsEntity.class);
 
-    mockMvc.perform(delete("/delete-cluster-group/cluster-001")
+    mockMvc.perform(delete("/booking-api/v1/record/delete-cluster-group/cluster-001")
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isOk())
         .andExpect(content()
@@ -163,7 +171,7 @@ class ClustersResourcesTest {
       assert(clustersRepository.findById("cluster-000").isEmpty());
     }
 
-    mockMvc.perform(put("/update-cluster-group/" + id)
+    mockMvc.perform(put("/booking-api/v1/record/update-cluster-group/" + id)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .content(mapper.writeValueAsString(clustersData)))

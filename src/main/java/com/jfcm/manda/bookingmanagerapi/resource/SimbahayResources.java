@@ -8,10 +8,16 @@
  */
 package com.jfcm.manda.bookingmanagerapi.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
+import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
 import com.jfcm.manda.bookingmanagerapi.model.SimbahayGroupsEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.SimbahayRepository;
+import com.jfcm.manda.bookingmanagerapi.service.impl.GenerateUUIDService;
+import com.jfcm.manda.bookingmanagerapi.service.impl.LoggingService;
 import com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,26 +30,52 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/booking-api/v1/records")
 public class SimbahayResources {
 
+  private final Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
   @Autowired
   private SimbahayRepository simbahayRepository;
+  @Autowired
+  private LoggingService LOG;
+  @Autowired
+  private GenerateUUIDService generateUUIDService;
 
   @GetMapping(value = "/simbahay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> getAllSimbahays() {
+  public ResponseEntity<JwtAuthenticationResponse> getAllSimbahays() throws JsonProcessingException {
     List<SimbahayGroupsEntity> data = simbahayRepository.findAll();
+    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Data retrieved successfully. %s record(s)", data.size()),
+        Constants.TRANSACTION_SUCCESS);
 
-    return ResponseUtil.generateResponse(String.format("Data retrieved successfully. %s record(s)", data.size()), HttpStatus.OK, data, Constants.TRANSACTION_SUCCESS);
+    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+        Constants.TRANSACTION_SUCCESS, String.format("Data retrieved successfully. %s record(s)", data.size()));
+
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping(value = "/simbahay/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> getSimbahayById(@PathVariable(value = "id") String id) {
+  public ResponseEntity<Object> getSimbahayById(@PathVariable(value = "id") String id) throws JsonProcessingException {
     Optional<SimbahayGroupsEntity> data = simbahayRepository.findById(id);
 
-    return ResponseUtil.generateResponse(String.format("Simbahay with id %s successfully retrieved", id), HttpStatus.OK, data, Constants.TRANSACTION_SUCCESS);
+    if (data.isEmpty()) {
+      LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Simbahay with id %s doesn't exist.", id),
+          Constants.TRANSACTION_FAILED);
+      var response = getJwtAuthenticationResponse(data, HttpStatus.NOT_FOUND.value(),
+          Constants.TRANSACTION_FAILED, String.format("Simbahay with id %s doesn't exist.", id));
+
+      return ResponseEntity.badRequest().body(response);
+    }
+
+    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+        Constants.TRANSACTION_SUCCESS, String.format("Simbahay with id %s was successfully retrieved.", id));
+    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Simbahay with id %s was successfully retrieved.", id),
+        Constants.TRANSACTION_SUCCESS);
+
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping(value = "/add-simbahay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -75,4 +107,13 @@ public class SimbahayResources {
     return ResponseUtil.generateResponse(String.format("Simbahay with id %s has been updated", id), HttpStatus.OK, simbahayGrp, Constants.TRANSACTION_SUCCESS);
   }
 
+  private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String respCode, String msg) {
+    return JwtAuthenticationResponse.builder()
+        .timestamp(timestamp)
+        .data(data)
+        .status(status)
+        .responsecode(respCode)
+        .message(msg)
+        .build();
+  }
 }

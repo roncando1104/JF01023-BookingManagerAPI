@@ -42,3 +42,8 @@ spring:
   sql:
     init:
       mode: always
+token:
+  session:
+    expiration: 10800000 #expires in 3 hours (1000 * 180 * 60)
+server:
+  port: 8080

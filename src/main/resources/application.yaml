@@ -1,4 +1,7 @@
 spring:
+  security:
+    filter:
+      order: 10
   jackson:
     serialization:
       indent-output: true
@@ -7,11 +10,11 @@ spring:
       matching-strategy: ANT_PATH_MATCHER
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: ron1104
     #url: jdbc:h2:mem:testdb
     #username: sa
     #password: password
-    username: postgres
-    password: ron1104
     max-active: 1
     initialSize: 1
     tomcat:
@@ -32,7 +35,6 @@ spring:
     hibernate:
       naming:
         naming_strategy: org.hibernate.cfg.EJB3NamingStrategy
-
     database-platform: org.hibernate.community.dialect.SQLiteDialect
     properties:
       hibernate:
@@ -44,3 +46,8 @@ springdoc:
     operationSorter: method
   api-docs:
     path: /api-docs
+token:
+  session:
+    expiration: 10800000 #expires in 3 hours (1000 * 180 * 60)
+server:
+  port: 8080

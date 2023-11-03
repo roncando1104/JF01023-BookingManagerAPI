@@ -5,6 +5,5 @@ import java.util.List;
 
 @FunctionalInterface
 public interface CSVService {
-
   void writeCSV(List<ReservationEntity> reservationTransactions);
 }
