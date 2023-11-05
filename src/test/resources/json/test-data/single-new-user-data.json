@@ -1,0 +1,18 @@
+{
+  "id" : "",
+  "firstName" : "John",
+  "middleName" : "Juan",
+  "lastName" : "Dela Cruz",
+  "emailAdd" : "juan.delacruz@gmail.com",
+  "contactNumber" : "09279471111",
+  "address" : "111 Boni Ave., Mandaluyong",
+  "birthday" : "1987-12-24",
+  "role" : "AE",
+  "status" : "ACTIVE",
+  "cluster" : "Cluster 1",
+  "clusterCode" : "cluster-001",
+  "simbahayName" : "Saturday Group",
+  "simbahayCode" : "smbhy-007",
+  "userName" : "juan1224",
+  "password" : "juan1224"
+}

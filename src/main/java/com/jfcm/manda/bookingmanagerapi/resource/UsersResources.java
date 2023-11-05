@@ -11,6 +11,7 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
+import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
 import com.jfcm.manda.bookingmanagerapi.model.UsersEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
 import com.jfcm.manda.bookingmanagerapi.service.DataValidationService;
@@ -18,9 +19,9 @@ import com.jfcm.manda.bookingmanagerapi.service.impl.GenerateUUIDService;
 import com.jfcm.manda.bookingmanagerapi.service.impl.LoggingService;
 import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
@@ -88,7 +89,7 @@ public class UsersResources {
 
   @PostMapping(value = "/add-user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<JwtAuthenticationResponse> addUser(@RequestBody String user) throws IOException {
-    UsersEntity data = utilities.readfromInput(user, UsersEntity.class);
+    UsersEntity data = utilities.readfromInput(user.replace('\u00A0',' '), UsersEntity.class);
     //validate if user already exists
     dataValidationService.validateDataAlreadyExist(data.getFirstName(), data.getLastName(), data.getBirthday());
     //ID is generated automatically
@@ -96,7 +97,7 @@ public class UsersResources {
       String generatedId = utilities.getRandomGeneratedId();
       data.setId(generatedId);
     } else {
-      throw new IllegalArgumentException("ID should be blank.  It will be set by the system for you.");
+      throw new InvalidInputException("ID should be blank.  It will be set by the system for you.");
     }
 
     var newUser = usersRepository.save(data);
@@ -155,8 +156,12 @@ public class UsersResources {
   }
 
   private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String respCode, String msg) {
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    String dateTokenCreated = formatter.format(dateTime);
+
     return JwtAuthenticationResponse.builder()
-        //.timestamp(dateTime)
+        .timestamp(dateTokenCreated)
         .data(data)
         .status(status)
         .responsecode(respCode)

@@ -26,15 +26,15 @@ public interface UsersRepository extends JpaRepository<UsersEntity, String> {
   List<UsersEntity> findAll();
   void deleteById(String id);
 
-  @Modifying
-  @Transactional
-  @Query(nativeQuery = true,
-  value = "UPDATE users SET password = :password WHERE id = :id")
-  void updatePassword(@Param("password") String password, @Param("id") String id);
-
   @Query(nativeQuery = true,
   value = "SELECT id from users WHERE first_name = :firstName AND last_name = :lastName")
   String findUserIdByFullName(@Param("firstName") String firstName, @Param("lastName") String lastName);
+
+  @Modifying
+  @Transactional
+  @Query(nativeQuery = true,
+      value = "UPDATE users SET password = :password WHERE id = :id")
+  void updatePassword(@Param("password") String password, @Param("id") String id);
 
   @Query(nativeQuery = true,
   value = "SELECT id, first_name, last_name, birthday from users WHERE first_name = :firstName AND last_name = :lastName AND birthday = :birthday")

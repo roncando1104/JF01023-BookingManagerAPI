@@ -8,7 +8,11 @@
  */
 package com.jfcm.manda.bookingmanagerapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+//import com.jfcm.manda.bookingmanagerapi.utils.CustomAuthorityDeserializerUtil;
+import com.jfcm.manda.bookingmanagerapi.utils.CustomAuthorityDeserializerUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -35,6 +39,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @ToString
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UsersEntity implements UserDetails {
 
   /*
@@ -102,7 +107,7 @@ public class UsersEntity implements UserDetails {
   @NonNull
   private String password;
 
-
+  @JsonDeserialize(using = CustomAuthorityDeserializerUtil.class)
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority(role.name()));

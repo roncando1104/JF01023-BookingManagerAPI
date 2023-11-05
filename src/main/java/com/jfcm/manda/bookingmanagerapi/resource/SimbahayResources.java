@@ -19,6 +19,7 @@ import com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,8 +110,12 @@ public class SimbahayResources {
   }
 
   private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String respCode, String msg) {
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    String dateTokenCreated = formatter.format(dateTime);
+
     return JwtAuthenticationResponse.builder()
-        //.timestamp(dateTime)
+        .timestamp(dateTokenCreated)
         .data(data)
         .status(status)
         .responsecode(respCode)

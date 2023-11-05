@@ -15,7 +15,27 @@
   <description>bookingmanagerapi</description>
   <packaging>jar</packaging>
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>17</java.version>
+
+    <springboot.buildpack-platform.version>3.1.0</springboot.buildpack-platform.version>
+    <jjwt.api.version>0.11.5</jjwt.api.version>
+    <jjwt.impl.version>0.11.5</jjwt.impl.version>
+    <jjwt.jackson.version>0.11.5</jjwt.jackson.version>
+    <mysql.connector-java.version>8.0.28</mysql.connector-java.version>
+    <commons-lang3.version>3.13.0</commons-lang3.version>
+    <apache.ant.version>1.10.13</apache.ant.version>
+    <jackson.datatype-jsr310.version>2.13.4</jackson.datatype-jsr310.version>
+    <org.osgi.compendium.version>4.2.0</org.osgi.compendium.version>
+    <org.json.version>20231013</org.json.version>
+    <springdoc.openapi.starter-webmvc-ui.version>2.2.0</springdoc.openapi.starter-webmvc-ui.version>
+    <h2.database.version>1.4.193</h2.database.version>
+    <junit.jupiter-api.version>5.9.2</junit.jupiter-api.version>
+    <springboot.test.version>3.1.5</springboot.test.version>
+    <!--Plugins Version-->
+    <maven.surefire-plugin.version>3.2.1</maven.surefire-plugin.version>
+    <junit.jupiter-engine.version>5.9.1</junit.jupiter-engine.version>
   </properties>
 
   <dependencies>
@@ -49,7 +69,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-buildpack-platform</artifactId>
-      <version>3.1.0</version>
+      <version>${springboot.buildpack-platform.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -60,17 +80,17 @@
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>
-      <version>0.11.5</version>
+      <version>${jjwt.api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-impl</artifactId>
-      <version>0.11.5</version>
+      <version>${jjwt.impl.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-jackson</artifactId>
-      <version>0.11.5</version>
+      <version>${jjwt.jackson.version}</version>
     </dependency>
 
     <dependency>
@@ -90,57 +110,58 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.28</version>
+      <version>${mysql.connector-java.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.13.0</version>
+      <version>${commons-lang3.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>1.10.13</version>
+      <version>${apache.ant.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>2.13.4</version>
+      <version>${jackson.datatype-jsr310.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.compendium</artifactId>
-      <version>4.2.0</version>
+      <version>${org.osgi.compendium.version}</version>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20231013</version>
+      <version>${org.json.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-      <version>2.2.0</version>
+      <version>${springdoc.openapi.starter-webmvc-ui.version}</version>
     </dependency>
 
+    <!--Test Dependencies-->
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>runtime</scope>
-      <version>1.4.193</version>
+      <version>${h2.database.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.9.2</version>
+      <version>${junit.jupiter-api.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-test</artifactId>
-      <version>3.1.5</version>
+      <version>${springboot.test.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -151,12 +172,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>${maven.surefire-plugin.version}</version>
         <dependencies>
           <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.9.1</version>
+            <version>${junit.jupiter-engine.version}</version>
           </dependency>
         </dependencies>
       </plugin>

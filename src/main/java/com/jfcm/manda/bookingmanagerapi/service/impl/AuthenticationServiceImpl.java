@@ -14,6 +14,7 @@ import com.jfcm.manda.bookingmanagerapi.dao.request.SignUpRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.request.SigninRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.request.UpdatePasswordRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
+import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
 import com.jfcm.manda.bookingmanagerapi.exception.UserNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.model.UsersEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
@@ -92,7 +93,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword()));
 
     var user = usersRepository.findByUserName(request.getUserName())
-        .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+        .orElseThrow(() -> new InvalidInputException("Invalid username or password"));
 
     var jwt = jwtService.generateToken(user);
     var tokenExpiry = jwtService.extractExpiration(jwt);

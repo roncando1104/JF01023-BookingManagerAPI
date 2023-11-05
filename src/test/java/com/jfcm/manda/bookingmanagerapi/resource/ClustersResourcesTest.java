@@ -71,7 +71,7 @@ class ClustersResourcesTest {
   @ParameterizedTest
   @ValueSource(strings = {"cluster-001", "cluster-000"})
   @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
-  void testGetAllClusterGroupsById_return200(String id) throws Exception {
+  void testGetAllClusterGroupsById_return_200_and_404(String id) throws Exception {
     ClusterGroupsEntity clustersData;
     String clusterId;
     String transactionMessage;
