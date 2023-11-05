@@ -10,6 +10,5 @@ import org.springframework.http.ResponseEntity;
 public interface AuthenticationService {
   JwtAuthenticationResponse signup(SignUpRequest request) throws JsonProcessingException;
   JwtAuthenticationResponse signin(SigninRequest request) throws JsonProcessingException;
-
   JwtAuthenticationResponse updatePassword(String request, String id) throws JsonProcessingException;
 }

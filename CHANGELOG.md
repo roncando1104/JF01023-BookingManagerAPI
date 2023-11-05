@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - SecurityConfig
   - dao package
   - Extended UserDetails in UserEntity
-  - UserAuthenTicationResources
+  - UserAuthenticationResources
   - AuthenticationService
   - JwtService
 - Modified the responses of resources

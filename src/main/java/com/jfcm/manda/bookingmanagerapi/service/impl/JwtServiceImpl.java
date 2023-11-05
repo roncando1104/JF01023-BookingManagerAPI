@@ -16,6 +16,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JwtServiceImpl implements JwtService {
+
+  private final LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("Asia/Manila"));
 
   @Value("#{new Long('${token.session.expiration}')}")
   //@Value("${token.session.expiration}")
@@ -63,7 +67,8 @@ public class JwtServiceImpl implements JwtService {
     return extractExpiration(token).before(new Date());
   }
 
-  private Date extractExpiration(String token) {
+  @Override
+  public Date extractExpiration(String token) {
     return extractClaim(token, Claims::getExpiration);
   }
 

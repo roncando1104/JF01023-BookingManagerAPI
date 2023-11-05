@@ -8,7 +8,8 @@
  */
 package com.jfcm.manda.bookingmanagerapi.dao.response;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,8 +20,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JwtAuthenticationResponse {
-  private Timestamp timestamp;
+
+  private String timestamp;
   private String token;
+  private String expiration;
   private Object data;
   private int status;
   private String responsecode;

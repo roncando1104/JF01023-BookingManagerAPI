@@ -18,6 +18,7 @@ import com.jfcm.manda.bookingmanagerapi.service.impl.LoggingService;
 import com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/booking-api/v1/records")
 public class SimbahayResources {
 
-  private final Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
+  private final LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("Asia/Manila"));
   @Autowired
   private SimbahayRepository simbahayRepository;
   @Autowired
@@ -109,7 +110,7 @@ public class SimbahayResources {
 
   private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String respCode, String msg) {
     return JwtAuthenticationResponse.builder()
-        .timestamp(timestamp)
+        //.timestamp(dateTime)
         .data(data)
         .status(status)
         .responsecode(respCode)

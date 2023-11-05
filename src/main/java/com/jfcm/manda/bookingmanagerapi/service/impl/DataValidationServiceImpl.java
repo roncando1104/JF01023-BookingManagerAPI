@@ -13,7 +13,6 @@ import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.exception.DataAlreadyExistException;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
 import com.jfcm.manda.bookingmanagerapi.service.DataValidationService;
-import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

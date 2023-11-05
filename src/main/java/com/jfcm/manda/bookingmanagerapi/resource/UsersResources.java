@@ -20,6 +20,7 @@ import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/booking-api/v1/records")
 public class UsersResources {
 
-  private final Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
+  private final LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("Asia/Manila"));
   @Autowired
   private UsersRepository usersRepository;
   @Autowired
@@ -78,8 +79,8 @@ public class UsersResources {
     }
 
     var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
-        Constants.TRANSACTION_SUCCESS, String.format("data with id %s was successfully retrieved.", id));
-    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("data with id %s was successfully retrieved.", id),
+        Constants.TRANSACTION_SUCCESS, String.format("User with id %s was successfully retrieved.", id));
+    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User with id %s was successfully retrieved.", id),
         Constants.TRANSACTION_SUCCESS);
 
     return ResponseEntity.ok(response);
@@ -155,7 +156,7 @@ public class UsersResources {
 
   private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String respCode, String msg) {
     return JwtAuthenticationResponse.builder()
-        .timestamp(timestamp)
+        //.timestamp(dateTime)
         .data(data)
         .status(status)
         .responsecode(respCode)

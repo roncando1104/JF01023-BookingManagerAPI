@@ -9,20 +9,14 @@
 package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.dao.request.SignUpRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.request.SigninRequest;
-import com.jfcm.manda.bookingmanagerapi.dao.request.UpdatePasswordRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
-import com.jfcm.manda.bookingmanagerapi.model.UsersEntity;
 import com.jfcm.manda.bookingmanagerapi.service.AuthenticationService;
-import com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil;
 import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,6 +56,6 @@ public class UserAuthenticationResources {
 
   @PutMapping("/update-password/{id}")
   public ResponseEntity<JwtAuthenticationResponse> updatePassword(@RequestBody String request, @PathVariable String id) throws JsonProcessingException {
-   return ResponseEntity.ok(authenticationService.updatePassword(request, id));
+    return ResponseEntity.ok(authenticationService.updatePassword(request, id));
   }
 }

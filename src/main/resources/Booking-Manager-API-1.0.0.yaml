@@ -12,20 +12,20 @@ info:
     url: http://jfcm-manda/dummy/url
   version: 1.0.0
 servers:
-- url: http://localhost:8080/
-  description: LOCAL ENV
+  - url: http://localhost:8080/
+    description: LOCAL ENV
 paths:
-  /update-user/{id}:
+  /booking-api/v1/records/update-user/{id}:
     put:
       tags:
-      - users-resources
+        - users-resources
       operationId: updateUserById
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -38,18 +38,18 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-  /update-simbahay/{id}:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+  /booking-api/v1/records/update-simbahay/{id}:
     put:
       tags:
-      - simbahay-resources
+        - simbahay-resources
       operationId: updateSimbahayById
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -63,17 +63,17 @@ paths:
             application/json:
               schema:
                 type: object
-  /update-cluster-group/{id}:
+  /booking-api/v1/records/update-cluster-group/{id}:
     put:
       tags:
-      - clusters-resources
+        - clusters-resources
       operationId: updateUserById_1
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -87,11 +87,17 @@ paths:
             application/json:
               schema:
                 type: object
-  /add-user:
-    post:
+  /booking-api/v1/auth/update-password/{id}:
+    put:
       tags:
-      - users-resources
-      operationId: addUser
+        - user-authentication-resources
+      operationId: updatePassword
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -102,31 +108,13 @@ paths:
         "200":
           description: OK
           content:
-            application/json:
+            '*/*':
               schema:
-                type: object
-  /add-simbahay:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+  /booking-api/v1/reservations/add-reservation:
     post:
       tags:
-      - simbahay-resources
-      operationId: addSimbahayGroup
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SimbahayGroupsEntity'
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-  /add-reservation:
-    post:
-      tags:
-      - reservation-resources
+        - reservation-resources
       operationId: addReservation
       requestBody:
         content:
@@ -141,10 +129,46 @@ paths:
             application/json:
               schema:
                 type: object
-  /add-cluster:
+  /booking-api/v1/records/add-user:
     post:
       tags:
-      - clusters-resources
+        - users-resources
+      operationId: addUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+  /booking-api/v1/records/add-simbahay:
+    post:
+      tags:
+        - simbahay-resources
+      operationId: addSimbahayGroup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimbahayGroupsEntity'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /booking-api/v1/records/add-cluster:
+    post:
+      tags:
+        - clusters-resources
       operationId: addClusterGroup
       requestBody:
         content:
@@ -159,10 +183,46 @@ paths:
             application/json:
               schema:
                 type: object
-  /users:
+  /booking-api/v1/auth/signup:
+    post:
+      tags:
+        - user-authentication-resources
+      operationId: signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+  /booking-api/v1/auth/signin:
+    post:
+      tags:
+        - user-authentication-resources
+      operationId: signin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SigninRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+  /booking-api/v1/records/users:
     get:
       tags:
-      - users-resources
+        - users-resources
       operationId: getAllUsers
       responses:
         "200":
@@ -170,29 +230,29 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-  /user/{id}:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+  /booking-api/v1/records/user/{id}:
     get:
       tags:
-      - users-resources
+        - users-resources
       operationId: getUserById
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                type: object
-  /simbahay:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+  /booking-api/v1/records/simbahay:
     get:
       tags:
-      - simbahay-resources
+        - simbahay-resources
       operationId: getAllSimbahays
       responses:
         "200":
@@ -200,18 +260,18 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-  /simbahay/{id}:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+  /booking-api/v1/records/simbahay/{id}:
     get:
       tags:
-      - simbahay-resources
+        - simbahay-resources
       operationId: getSimbahayById
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -219,17 +279,17 @@ paths:
             application/json:
               schema:
                 type: object
-  /cluster/{id}:
+  /booking-api/v1/records/cluster/{id}:
     get:
       tags:
-      - clusters-resources
+        - clusters-resources
       operationId: getClusterById
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -237,10 +297,10 @@ paths:
             application/json:
               schema:
                 type: object
-  /all-cluster-groups:
+  /booking-api/v1/records/all-cluster-groups:
     get:
       tags:
-      - clusters-resources
+        - clusters-resources
       operationId: getAllClusterGroups
       responses:
         "200":
@@ -249,35 +309,35 @@ paths:
             application/json:
               schema:
                 type: object
-  /delete-user/{id}:
+  /booking-api/v1/records/delete-user/{id}:
     delete:
       tags:
-      - users-resources
+        - users-resources
       operationId: deleteMember
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                type: object
-  /delete-simbahay/{id}:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+  /booking-api/v1/records/delete-simbahay/{id}:
     delete:
       tags:
-      - simbahay-resources
+        - simbahay-resources
       operationId: deleteSimbahay
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -285,17 +345,17 @@ paths:
             application/json:
               schema:
                 type: object
-  /delete-cluster-group/{id}:
+  /booking-api/v1/records/delete-cluster-group/{id}:
     delete:
       tags:
-      - clusters-resources
+        - clusters-resources
       operationId: deleteClusterGroup
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -305,13 +365,27 @@ paths:
                 type: object
 components:
   schemas:
+    GrantedAuthority:
+      type: object
+      properties:
+        authority:
+          type: string
     UsersEntity:
       required:
-      - cluster
-      - clusterCode
-      - firstName
-      - lastName
-      - role
+        - address
+        - birthday
+        - cluster
+        - clusterCode
+        - contactNumber
+        - emailAdd
+        - firstName
+        - lastName
+        - password
+        - role
+        - simbahayCode
+        - simbahayName
+        - status
+        - userName
       type: object
       properties:
         id:
@@ -322,11 +396,69 @@ components:
           type: string
         lastName:
           type: string
+        emailAdd:
+          type: string
+        contactNumber:
+          type: string
+        address:
+          type: string
+        birthday:
+          type: string
         role:
+          type: string
+          enum:
+            - USER
+            - OFFICE_ADMIN
+            - SOW_ADMIN
+            - PASTOR
+            - ELDER
+            - AE
+            - MINISTRY_HEAD
+            - SIMBAHAY_LEADER
+        status:
           type: string
         cluster:
           type: string
         clusterCode:
+          type: string
+        simbahayName:
+          type: string
+        simbahayCode:
+          type: string
+        userName:
+          type: string
+        password:
+          type: string
+        enabled:
+          type: boolean
+        authorities:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrantedAuthority'
+        username:
+          type: string
+        accountNonExpired:
+          type: boolean
+        accountNonLocked:
+          type: boolean
+        credentialsNonExpired:
+          type: boolean
+    JwtAuthenticationResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        token:
+          type: string
+        data:
+          type: object
+        status:
+          type: integer
+          format: int32
+        responsecode:
+          type: string
+        message:
           type: string
     SimbahayGroupsEntity:
       type: object
@@ -366,3 +498,10 @@ components:
         totalSimbahay:
           type: integer
           format: int32
+    SigninRequest:
+      type: object
+      properties:
+        userName:
+          type: string
+        password:
+          type: string

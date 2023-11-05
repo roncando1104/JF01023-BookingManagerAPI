@@ -1,0 +1,14 @@
+ {
+    "id": "",
+    "bookingDate": "",
+    "eventDate": "2023-10-29",
+    "room": "room1",
+    "groupName": "cluster 3",
+    "groupCode": "cluster-003",
+    "activity": "fellowship",
+    "bookedBy": "Ronald Cando",
+    "clientId": "",
+    "withFee": "true",
+    "totalFee": "",
+    "status": "FOR_APPROVAL"
+  }

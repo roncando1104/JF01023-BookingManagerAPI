@@ -14,24 +14,20 @@ import com.jfcm.manda.bookingmanagerapi.dao.request.SignUpRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.request.SigninRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.request.UpdatePasswordRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
-import com.jfcm.manda.bookingmanagerapi.exception.DataAlreadyExistException;
 import com.jfcm.manda.bookingmanagerapi.exception.UserNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.model.UsersEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
-import com.jfcm.manda.bookingmanagerapi.resource.UsersResources;
 import com.jfcm.manda.bookingmanagerapi.service.AuthenticationService;
 import com.jfcm.manda.bookingmanagerapi.service.DataValidationService;
 import com.jfcm.manda.bookingmanagerapi.service.JwtService;
-import com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil;
 import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,6 +41,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
+  private final LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("Asia/Manila"));
+
   @Autowired
   private Utilities utilities;
   @Autowired
@@ -53,9 +51,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private GenerateUUIDService generateUUIDService;
   @Autowired
   private LoggingService LOG;
-
-  private final Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
-
 
   @Override
   public JwtAuthenticationResponse signup(SignUpRequest request) throws JsonProcessingException {
@@ -83,17 +78,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     usersRepository.save(user);
     var jwt = jwtService.generateToken(user);
-    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("You have been added as new user with role %s and id %s", user.getRole(), user.getId()),
+    var tokenExpiry = jwtService.extractExpiration(jwt);
+
+    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(),
+        String.format("You have been added as new user with role %s and id %s", user.getRole(), user.getId()),
         Constants.TRANSACTION_SUCCESS);
 
-    return JwtAuthenticationResponse.builder()
-        .timestamp(timestamp)
-        .token(jwt)
-        .data(user)
-        .status(HttpStatus.OK.value())
-        .responsecode(Constants.TRANSACTION_SUCCESS)
-        .message(String.format("You have been added as new user with role %s and id %s", user.getRole(), user.getId()))
-        .build();
+    return getAuthenticationResponse(tokenExpiry, jwt, user, String.format("You have been added as new user with role %s and id %s", user.getRole(), user.getId()));
   }
 
   @Override
@@ -102,18 +93,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     var user = usersRepository.findByUserName(request.getUserName())
         .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+
     var jwt = jwtService.generateToken(user);
-    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User %s %shas successfully login.", user.getFirstName(), user.getLastName()),
+    var tokenExpiry = jwtService.extractExpiration(jwt);
+
+    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(),
+        String.format("User %s %s has successfully login.", user.getFirstName(), user.getLastName()),
         Constants.TRANSACTION_SUCCESS);
 
-    return JwtAuthenticationResponse.builder()
-        .timestamp(timestamp)
-        .token(jwt)
-        .data(user)
-        .status(HttpStatus.OK.value())
-        .responsecode(Constants.TRANSACTION_SUCCESS)
-        .message(String.format("User %s %shas successfully login.", user.getFirstName(), user.getLastName()))
-        .build();
+    return getAuthenticationResponse(tokenExpiry, jwt, user, String.format("User %s %s has successfully login.", user.getFirstName(), user.getLastName()));
   }
 
   @Override
@@ -127,16 +115,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     //update password with the new password
     usersRepository.updatePassword(passwordEncoder.encode(data.getNewPassword()), id);
     var jwt = jwtService.generateToken(user);
+    var tokenExpiry = jwtService.extractExpiration(jwt);
+
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User with id %s has successfully updated password", user.getId()),
         Constants.TRANSACTION_SUCCESS);
 
+    return getAuthenticationResponse(tokenExpiry, jwt, user, String.format("User with id %s has successfully updated password", user.getId()));
+  }
+
+  private JwtAuthenticationResponse getAuthenticationResponse(Date tokenExpiry, String jwt, Object user, String msg) {
+
+    LocalDateTime tokenExpiryStr = LocalDateTime.ofInstant(tokenExpiry.toInstant(), ZoneId.systemDefault());
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    String dateTokenCreated = formatter.format(dateTime);
+    String tokenExpiryDate = formatter.format(tokenExpiryStr);
+
     return JwtAuthenticationResponse.builder()
-        .timestamp(timestamp)
+        .timestamp(dateTokenCreated)
         .token(jwt)
+        .expiration(tokenExpiryDate)
         .data(user)
         .status(HttpStatus.OK.value())
         .responsecode(Constants.TRANSACTION_SUCCESS)
-        .message(String.format("User with id %s has successfully updated password", user.getId()))
+        .message(msg)
         .build();
   }
 }

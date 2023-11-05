@@ -90,5 +90,4 @@ public class ClustersResources {
 
     return ResponseUtil.generateResponse(String.format("Cluster with id %s has been updated", id), HttpStatus.OK, data, Constants.TRANSACTION_SUCCESS);
   }
-
 }

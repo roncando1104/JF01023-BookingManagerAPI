@@ -10,6 +10,7 @@ package com.jfcm.manda.bookingmanagerapi.config;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -37,9 +38,7 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable).cors(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(request -> request.requestMatchers(
-            "/booking-api/v1/auth/**",
-                "/booking-api/v1/records/**",
-                "/booking-api/v1/reservations/**")
+            Constants.AUTH_WHITE_LIST)
             .permitAll().anyRequest().authenticated())
         .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
         .authenticationProvider(authenticationProvider()).addFilterBefore(
