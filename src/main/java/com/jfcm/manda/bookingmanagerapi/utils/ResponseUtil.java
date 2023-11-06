@@ -1,10 +1,9 @@
-/*
- *  ResponseUtil.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.utils.ResponseUtil}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and
+ * proprietary information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.utils;
 

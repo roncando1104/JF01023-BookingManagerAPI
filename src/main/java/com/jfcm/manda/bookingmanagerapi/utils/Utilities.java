@@ -1,10 +1,9 @@
-/*
- *  Utilities.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.utils.Utilities}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and proprietary
+ * information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.utils;
 
@@ -13,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,23 @@ public class Utilities {
 
   @Autowired
   private UsersRepository usersRepository;
+
+  public static String checkAndFixInvalidJson(String input) {
+    try {
+      final ObjectMapper mapper = new ObjectMapper();
+      mapper.readTree(input);
+      return input;
+    } catch (IOException e) {
+      input = input.replace('\u00A0', ' ');
+    }
+    return input;
+  }
+
+  public static String formatNumber(double value) {
+    DecimalFormat df = new DecimalFormat("###,###,###.00");
+
+    return df.format(value);
+  }
 
   public String getRandomGeneratedId() {
     Random rnd = new Random();
@@ -42,17 +59,11 @@ public class Utilities {
     return objectMapper.readValue(input, object);
   }
 
-  public static String formatNumber(double value) {
-    DecimalFormat df = new DecimalFormat("###,###,###.00");
-
-    return df.format(value);
-  }
-
   public String splitFullName(String fullName, String namePart) {
-    String lastName = fullName.split(" ")[fullName.split(" ").length-1];
+    String lastName = fullName.split(" ")[fullName.split(" ").length - 1];
     String firstName = fullName.substring(0, fullName.length() - lastName.length());
 
-    if (namePart.equalsIgnoreCase("lastName")){
+    if (namePart.equalsIgnoreCase("lastName")) {
       return lastName.trim();
     } else {
       return firstName.trim();

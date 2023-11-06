@@ -1,10 +1,9 @@
-/*
- *  ControllerAdvisor.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.exception.CustomExceptionHandler}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential
+ * and proprietary information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.exception;
 
@@ -24,13 +23,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 @RestController
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+
   private final LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("Asia/Manila"));
+  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+  private final String dateNow = formatter.format(dateTime);
 
   @ExceptionHandler(DataAlreadyExistException.class)
   public ResponseEntity<ErrorResponse> handlesDataAlreadyExistException(DataAlreadyExistException ex, WebRequest request) {
-
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-    String dateNow = formatter.format(dateTime);
 
     var error = ErrorResponse.builder()
         .timestamp(dateNow)
@@ -41,6 +40,34 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         .build();
 
     return ResponseEntity.badRequest().body(error);
+  }
+
+  @ExceptionHandler(InvalidInputException.class)
+  public ResponseEntity<ErrorResponse> handlesInvalidInputException(InvalidInputException ex, WebRequest request) {
+
+    var error = ErrorResponse.builder()
+        .timestamp(dateNow)
+        .status(HttpStatus.FORBIDDEN.value())
+        .responsecode(Constants.TRANSACTION_FAILED)
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
+
+    return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+  }
+
+  @ExceptionHandler(RecordNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handlesRecordNotFoundException(RecordNotFoundException ex, WebRequest request) {
+
+    var error = ErrorResponse.builder()
+        .timestamp(dateNow)
+        .status(HttpStatus.NOT_FOUND.value())
+        .responsecode(Constants.TRANSACTION_FAILED)
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
+
+    return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
   }
 
 //  @Override

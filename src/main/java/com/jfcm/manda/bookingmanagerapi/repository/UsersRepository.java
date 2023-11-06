@@ -1,10 +1,9 @@
-/*
- *  Repository.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.repository.UsersRepository}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and
+ * proprietary information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.repository;
 
@@ -22,12 +21,15 @@ import org.springframework.stereotype.Repository;
 public interface UsersRepository extends JpaRepository<UsersEntity, String> {
 
   Optional<UsersEntity> findById(String id);
+
   Optional<UsersEntity> findByUserName(String userName);
+
   List<UsersEntity> findAll();
+
   void deleteById(String id);
 
   @Query(nativeQuery = true,
-  value = "SELECT id from users WHERE first_name = :firstName AND last_name = :lastName")
+      value = "SELECT id from users WHERE first_name = :firstName AND last_name = :lastName")
   String findUserIdByFullName(@Param("firstName") String firstName, @Param("lastName") String lastName);
 
   @Modifying
@@ -37,7 +39,7 @@ public interface UsersRepository extends JpaRepository<UsersEntity, String> {
   void updatePassword(@Param("password") String password, @Param("id") String id);
 
   @Query(nativeQuery = true,
-  value = "SELECT id, first_name, last_name, birthday from users WHERE first_name = :firstName AND last_name = :lastName AND birthday = :birthday")
+      value = "SELECT id, first_name, last_name, birthday from users WHERE first_name = :firstName AND last_name = :lastName AND birthday = :birthday")
   String verifyUserAlreadyExist(@Param("firstName") String firstName, @Param("lastName") String lastName, @Param("birthday") String birthday);
 
 }

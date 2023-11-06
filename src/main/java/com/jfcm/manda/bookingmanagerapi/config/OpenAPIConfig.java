@@ -1,10 +1,9 @@
-/*
- *  OpenAPIConfig.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.config.OpenAPIConfig}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and
+ * proprietary information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.config;
 
@@ -32,8 +31,9 @@ import io.swagger.v3.oas.annotations.servers.Server;
     ),
     servers = {
         @Server(url = "http://localhost:8080/",
-        description = "LOCAL ENV")
+            description = "LOCAL ENV")
     }
 )
 public class OpenAPIConfig {
+
 }

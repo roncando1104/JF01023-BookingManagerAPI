@@ -1,10 +1,9 @@
-/*
- *  SecurityConfig.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.config.SecurityConfig}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and
+ * proprietary information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.config;
 
@@ -34,11 +33,12 @@ public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final UserService userService;
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable).cors(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(request -> request.requestMatchers(
-            Constants.AUTH_WHITE_LIST)
+                Constants.AUTH_WHITE_LIST)
             .permitAll().anyRequest().authenticated())
         .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
         .authenticationProvider(authenticationProvider()).addFilterBefore(

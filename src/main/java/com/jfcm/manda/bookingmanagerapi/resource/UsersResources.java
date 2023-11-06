@@ -1,10 +1,9 @@
-/*
- *  UsersResources.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.resource.UsersResources}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and
+ * proprietary information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.resource;
 
@@ -12,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
 import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
+import com.jfcm.manda.bookingmanagerapi.exception.RecordNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.model.UsersEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
 import com.jfcm.manda.bookingmanagerapi.service.DataValidationService;
@@ -54,6 +54,11 @@ public class UsersResources {
   @Autowired
   private GenerateUUIDService generateUUIDService;
 
+  /**
+   * @implNote this method retrieves all the users from database
+   * @return ResponseEntity OK
+   * @throws JsonProcessingException if an error during JSON processing occurs
+   */
   @GetMapping(value = "/users", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<JwtAuthenticationResponse> getAllUsers() throws JsonProcessingException {
     List<UsersEntity> data = usersRepository.findAll();
@@ -66,6 +71,13 @@ public class UsersResources {
     return ResponseEntity.ok(response);
   }
 
+  /**
+   * @implNote this method retrieves a user based on given id from database
+   * @param id as {@link PathVariable}
+   * @return ResponseEntity OK
+   * @throws JsonProcessingException if an error during JSON processing occurs
+   * @throws RecordNotFoundException if user doesn't exist
+   */
   @GetMapping(value = "/user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<JwtAuthenticationResponse> getUserById(@PathVariable(value = "id") String id) throws JsonProcessingException {
     Optional<UsersEntity> data = usersRepository.findById(id);
@@ -73,10 +85,7 @@ public class UsersResources {
     if (data.isEmpty()) {
       LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User with id %s doesn't exist.", id),
           Constants.TRANSACTION_FAILED);
-      var response = getJwtAuthenticationResponse(data, HttpStatus.NOT_FOUND.value(),
-          Constants.TRANSACTION_FAILED, String.format("User with id %s doesn't exist.", id));
-
-      return ResponseEntity.badRequest().body(response);
+      throw new RecordNotFoundException(String.format("User with id %s doesn't exist.", id));
     }
 
     var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
@@ -87,9 +96,39 @@ public class UsersResources {
     return ResponseEntity.ok(response);
   }
 
+  /**
+   * @request
+   * This method accepts below payload as {@link RequestBody}
+  {
+  "firstName": "",
+  "middleName": "",
+  "lastName": "",
+  "emailAdd": "",
+  "contactNumber": "",
+  "address": "",
+  "birthday": "",
+  "role": "",
+  "status": "",
+  "cluster": "",
+  "clusterCode": "",
+  "simbahayName": "",
+  "simbahayCode": "",
+  "userName": "",
+  "password": ""
+  }
+   * @implNote id is auto generated
+   * @param input as {@link RequestBody}
+   * @implNote JSON payload is checked and fixed if contains @nbsp
+   * @return ResponseEntity OK
+   * @throws JsonProcessingException if an error during JSON processing occurs
+   * @throws InvalidInputException if ID is provided.  ID is auto generated
+   * @throws com.jfcm.manda.bookingmanagerapi.exception.DataAlreadyExistException if user exist.
+   * @implNote User is queried using first name, last name, and birthday (line 133)
+   */
   @PostMapping(value = "/add-user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<JwtAuthenticationResponse> addUser(@RequestBody String user) throws IOException {
-    UsersEntity data = utilities.readfromInput(user.replace('\u00A0',' '), UsersEntity.class);
+  public ResponseEntity<JwtAuthenticationResponse> addUser(@RequestBody String input) throws IOException {
+    String processedInput = Utilities.checkAndFixInvalidJson(input);
+    UsersEntity data = utilities.readfromInput(processedInput, UsersEntity.class);
     //validate if user already exists
     dataValidationService.validateDataAlreadyExist(data.getFirstName(), data.getLastName(), data.getBirthday());
     //ID is generated automatically
@@ -101,7 +140,7 @@ public class UsersResources {
     }
 
     var newUser = usersRepository.save(data);
-    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+    var response = getJwtAuthenticationResponse(data, HttpStatus.CREATED.value(),
         Constants.TRANSACTION_SUCCESS, String.format("New user with id %s successfully created!", newUser.getId()));
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("New user with id %s successfully created!", newUser.getId()),
         Constants.TRANSACTION_SUCCESS);
@@ -109,6 +148,13 @@ public class UsersResources {
     return ResponseEntity.ok(response);
   }
 
+  /**
+   * @implNote this method deletes a user based on given id from database
+   * @param id as {@link PathVariable}
+   * @return ResponseEntity OK
+   * @throws JsonProcessingException if an error during JSON processing occurs
+   * @throws RecordNotFoundException if user doesn't exist
+   */
   @DeleteMapping(value = "/delete-user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<JwtAuthenticationResponse> deleteMember(@PathVariable(value = "id") String id) throws JsonProcessingException {
     var data = usersRepository.findById(id);
@@ -116,10 +162,7 @@ public class UsersResources {
     if (data.isEmpty()) {
       LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User with id %s doesn't exist.", id),
           Constants.TRANSACTION_FAILED);
-      var response = getJwtAuthenticationResponse(data, HttpStatus.NOT_FOUND.value(),
-          Constants.TRANSACTION_FAILED, String.format("User with id %s doesn't exist.", id));
-
-      return ResponseEntity.badRequest().body(response);
+      throw new RecordNotFoundException(String.format("User with id %s doesn't exist.", id));
     }
 
     usersRepository.deleteById(id);
@@ -131,23 +174,49 @@ public class UsersResources {
     return ResponseEntity.ok(response);
   }
 
+  /**
+   * @request
+   * This method accepts below payload as {@link RequestBody}
+  {
+  "firstName": "",
+  "middleName": "",
+  "lastName": "",
+  "emailAdd": "",
+  "contactNumber": "",
+  "address": "",
+  "birthday": "",
+  "role": "",
+  "status": "",
+  "cluster": "",
+  "clusterCode": "",
+  "simbahayName": "",
+  "simbahayCode": "",
+  "userName": "",
+  "password": ""
+  }
+   * @implNote id is auto generated
+   * @param input as {@link RequestBody}
+   * @param id as {@link PathVariable}
+   * @implNote JSON payload is checked and fixed if contains @nbsp
+   * @return ResponseEntity OK
+   * @throws JsonProcessingException if an error during JSON processing occurs
+   * @throws RecordNotFoundException if user doesn't exist
+   */
   @PutMapping(value = "/update-user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<JwtAuthenticationResponse> updateUserById(@RequestBody UsersEntity users, @PathVariable String id) throws JsonProcessingException {
+  public ResponseEntity<JwtAuthenticationResponse> updateUserById(@RequestBody String input, @PathVariable String id) throws JsonProcessingException {
+    String processedInput = Utilities.checkAndFixInvalidJson(input);
+    UsersEntity user = utilities.readfromInput(processedInput, UsersEntity.class);
+    Optional<UsersEntity> userById = usersRepository.findById(id);
 
-    Optional<UsersEntity> user = usersRepository.findById(id);
-
-    if (user.isEmpty()) {
+    if (userById.isEmpty()) {
       LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User with id %s doesn't exist.", id),
           Constants.TRANSACTION_FAILED);
-      var response = getJwtAuthenticationResponse(user, HttpStatus.NOT_FOUND.value(),
-          Constants.TRANSACTION_FAILED, String.format("User with id %s doesn't exist.", id));
-
-      return ResponseEntity.badRequest().body(response);
+      throw new RecordNotFoundException(String.format("User with id %s doesn't exist.", id));
     }
 
-    users.setId(id);
-    usersRepository.save(users);
-    var response = getJwtAuthenticationResponse(users, HttpStatus.OK.value(),
+    user.setId(id);
+    usersRepository.save(user);
+    var response = getJwtAuthenticationResponse(user, HttpStatus.OK.value(),
         Constants.TRANSACTION_SUCCESS, String.format("User with id %s has been updated", id));
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User with id %s has been updated", id),
         Constants.TRANSACTION_SUCCESS);

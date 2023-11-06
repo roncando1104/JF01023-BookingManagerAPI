@@ -1,10 +1,9 @@
-/*
- *  reservations.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.model.ReservationEntity}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and
+ * proprietary information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.model;
 
@@ -32,16 +31,20 @@ import lombok.ToString;
 @Table(name = "reservation")
 public class ReservationEntity {
 
-  /*
-  id integer [primary key]
-  booking_date varchar
-  room varchar
-  cluster_code varchar
-  booked_by varchar
-  with_fee varchar
-  total_fee int
-  status varchar
-  */
+  /**
+   id integer [primary key]
+   booking_date varchar
+   event_date varchar
+   room varchar
+   group_name varchar
+   group_code varchar
+   activity varchar
+   booked_by varchar
+   client_id varchar
+   with_fee varchar
+   total_fee int
+   status varchar
+   */
 
   @Id
   private String id;

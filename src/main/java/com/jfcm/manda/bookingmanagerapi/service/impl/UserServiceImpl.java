@@ -1,14 +1,13 @@
-/*
- *  UserServiceImpl.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.service.impl.UserServiceImpl}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and
+ * proprietary information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.service.impl;
 
-import com.jfcm.manda.bookingmanagerapi.exception.UserNotFoundException;
+import com.jfcm.manda.bookingmanagerapi.exception.RecordNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
 import com.jfcm.manda.bookingmanagerapi.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,17 +23,6 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDetailsService userDetailsService() {
     return username -> usersRepository.findByUserName(username)
-        .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found", username)));
+        .orElseThrow(() -> new RecordNotFoundException(String.format("User %s not found", username)));
   }
-
-//  @Override
-//  public UserDetailsService userDetailsService() {
-//    return new UserDetailsService() {
-//      @Override
-//      public UserDetails loadUserByUsername(String username) {
-//        return usersRepository.findByUserName(username)
-//            .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found", username)));
-//      }
-//    };
-//  }
 }

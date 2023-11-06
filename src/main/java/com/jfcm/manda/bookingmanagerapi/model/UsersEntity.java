@@ -1,17 +1,15 @@
-/*
- *  users.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.model.UsersEntity}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and proprietary
+ * information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-//import com.jfcm.manda.bookingmanagerapi.utils.CustomAuthorityDeserializerUtil;
 import com.jfcm.manda.bookingmanagerapi.utils.CustomAuthorityDeserializerUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,14 +40,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UsersEntity implements UserDetails {
 
-  /*
-  id integer [primary key]
-  first_name varchar
-  middle_name varchar
-  last_name varchar
-  role varchar
-  cluster varchar
-  cluster_code varchar */
+  /**
+   id integer [primary key]
+   first_name varchar
+   middle_name varchar
+   last_name varchar
+   email_add varchar
+   contact_number varchar
+   address varchar (@TODO: This will be broken down to details)
+   birthday varchar
+   role varchar
+   status varchar
+   cluster varchar
+   cluster_code varchar
+   simbahay_name varchar
+   simbahay_code varchar
+   user_name varchar
+   password varchar
+   @TODO: Add decodedPassword to store separately the decoded and non decoded.
+   */
 
   @Id
   private String id;

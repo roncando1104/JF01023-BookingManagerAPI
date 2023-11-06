@@ -1,10 +1,9 @@
-/*
- *  AuthenticationServiceImpl.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.service.impl.AuthenticationServiceImpl}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and
+ * proprietary information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.service.impl;
 
@@ -15,7 +14,7 @@ import com.jfcm.manda.bookingmanagerapi.dao.request.SigninRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.request.UpdatePasswordRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
 import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
-import com.jfcm.manda.bookingmanagerapi.exception.UserNotFoundException;
+import com.jfcm.manda.bookingmanagerapi.exception.RecordNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.model.UsersEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
 import com.jfcm.manda.bookingmanagerapi.service.AuthenticationService;
@@ -82,7 +81,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     var tokenExpiry = jwtService.extractExpiration(jwt);
 
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(),
-        String.format("You have been added as new user with role %s and id %s", user.getRole(), user.getId()),
+        String.format("You have been added as new user with %s role and id %s", user.getRole(), user.getId()),
         Constants.TRANSACTION_SUCCESS);
 
     return getAuthenticationResponse(tokenExpiry, jwt, user, String.format("You have been added as new user with role %s and id %s", user.getRole(), user.getId()));
@@ -90,10 +89,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
   @Override
   public JwtAuthenticationResponse signin(SigninRequest request) throws JsonProcessingException {
-    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword()));
-
     var user = usersRepository.findByUserName(request.getUserName())
         .orElseThrow(() -> new InvalidInputException("Invalid username or password"));
+    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword()));
 
     var jwt = jwtService.generateToken(user);
     var tokenExpiry = jwtService.extractExpiration(jwt);
@@ -112,7 +110,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(data.getUserName(), data.getOldPassword()));
 
     var user = usersRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException(String.format("User with id %s doesn't exist", id)));
+        .orElseThrow(() -> new RecordNotFoundException(String.format("User with id %s doesn't exist", id)));
     //update password with the new password
     usersRepository.updatePassword(passwordEncoder.encode(data.getNewPassword()), id);
     var jwt = jwtService.generateToken(user);

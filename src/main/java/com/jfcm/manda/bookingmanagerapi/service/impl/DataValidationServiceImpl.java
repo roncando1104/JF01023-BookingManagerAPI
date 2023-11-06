@@ -1,10 +1,9 @@
-/*
- *  DataValidationServiceImpl.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.service.impl.DataValidationServiceImpl}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and
+ * proprietary information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.service.impl;
 
@@ -13,6 +12,7 @@ import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.exception.DataAlreadyExistException;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
 import com.jfcm.manda.bookingmanagerapi.service.DataValidationService;
+import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +27,14 @@ public class DataValidationServiceImpl implements DataValidationService {
   @Autowired
   private LoggingService LOG;
 
+  /**
+   * @id newUserArray[0]
+   * @param firstName as newUserArray[1]
+   * @param lastName as newUserArray[2]
+   * @param birthday as newUserArray[3]
+   * @throws JsonProcessingException if an error during JSON processing occurs
+   * @throws DataAlreadyExistException if user already exist
+   */
   @Override
   public void validateDataAlreadyExist(String firstName, String lastName, String birthday) throws JsonProcessingException {
     String newUser = usersRepository.verifyUserAlreadyExist(firstName, lastName, birthday);
@@ -39,8 +47,8 @@ public class DataValidationServiceImpl implements DataValidationService {
             firstName, lastName, birthday, newUserArray[0]));
       }
     } else {
-      LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), "New User will be added", Constants.TRANSACTION_SUCCESS);
+      LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("New User with id %s is added",
+              Arrays.stream(newUser.split(",")).findFirst().orElse(null)), Constants.TRANSACTION_SUCCESS);
     }
-
   }
 }

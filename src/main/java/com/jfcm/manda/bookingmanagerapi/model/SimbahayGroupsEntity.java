@@ -1,10 +1,9 @@
-/*
- *  SimbahayGroups.java
+/**
+ * {@link com.jfcm.manda.bookingmanagerapi.model.SimbahayGroupsEntity}.java
+ * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and
+ * proprietary information of JFCM Mandaluyong
  *
- *  Copyright © 2023 ING Group. All rights reserved.
- *
- *  This software is the confidential and proprietary information of
- *  ING Group ("Confidential Information").
+ * @author Ronald Cando
  */
 package com.jfcm.manda.bookingmanagerapi.model;
 
@@ -25,18 +24,18 @@ import lombok.ToString;
 @Table(name = "simbahay_grp")
 public class SimbahayGroupsEntity {
 
-  /*
-  id integer [primary key]
-  simbahay_name varchar
-  simbahay_sched varchar
-  cluster varchar
-  cluster_code varchar
-  simbahay_leader1 varchar
-  simbahay_leader2 varchar
-  total_members integer
-  location varchar
-  status varchar
-  */
+  /**
+   id integer [primary key]
+   simbahay_name varchar
+   simbahay_sched varchar
+   cluster varchar
+   cluster_code varchar
+   simbahay_leader1 varchar
+   simbahay_leader2 varchar
+   total_members integer
+   location varchar
+   status varchar
+   */
 
   @Id
   private String id;
