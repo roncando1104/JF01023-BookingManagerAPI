@@ -45,22 +45,23 @@ public class ReservationResources {
   private LoggingService LOG;
 
   /**
-   * This method accepts below payload (this is just a sample)
+   * @request
+   * This method accepts below payload
    * {
    *     "id": "",
    *     "bookingDate": "",
-   *     "room": "room1",
-   *     "groupName": "cluster 1",
-   *     "groupCode": "cluster-001",
-   *     "activity": "fellowship",
-   *     "bookedBy": "Ronald Cando",
-   *     "clientId": "JF-000001",
-   *     "withFee": "false",
+   *     "room": "",
+   *     "groupName": "",
+   *     "groupCode": "",
+   *     "activity": "",
+   *     "bookedBy": "",
+   *     "clientId": "",
+   *     "withFee": "",
    *     "totalFee": "",
    *     "status": ""
    *   }
    * @param input string
-   * @id is auto generated as UUID
+   * @id is auto generated as UUID.  It should be blank in request payload.
    * @return ResponseEntity OK
    * @throws JsonProcessingException if an error during JSON processing occurs
    */
