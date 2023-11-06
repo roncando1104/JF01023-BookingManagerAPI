@@ -182,7 +182,7 @@ public class ClustersResources {
         Constants.TRANSACTION_SUCCESS);
 
     var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
-        String.format("Cluster with id %s has been updated", id));
+        String.format("Cluster group with id %s has been updated", id));
     return ResponseEntity.ok(response);
   }
 

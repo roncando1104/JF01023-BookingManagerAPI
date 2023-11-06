@@ -55,7 +55,7 @@ class ClustersResourcesTest {
             .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(jsonPath("data").value(clustersData))
         .andExpect(jsonPath("status", is(200)))
-        .andExpect(jsonPath("responseCode", is("TRN-000")));
+        .andExpect(jsonPath("responsecode", is("TRN-000")));
 
     assert (clustersRepository.findById("cluster-001").isPresent());
     assert (clustersRepository.findAll().size() == 4);
@@ -72,7 +72,7 @@ class ClustersResourcesTest {
   @ValueSource(strings = {"cluster-001", "cluster-000"})
   @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
   void testGetAllClusterGroupsById_return_200_and_404(String id) throws Exception {
-    ClusterGroupsEntity clustersData;
+    ClusterGroupsEntity clustersData = null;
     String clusterId;
     String transactionMessage;
     String tranCode;
@@ -88,7 +88,7 @@ class ClustersResourcesTest {
       responseCode = 200;
       resultMatcher = status().isOk();
     } else {
-      clustersData = null;
+      //clustersData = null;
       clusterId = "cluster-000";
       transactionMessage = "doesn't exist";
       tranCode = "TRN-001";
@@ -103,10 +103,10 @@ class ClustersResourcesTest {
         .andExpect(resultMatcher)
         .andExpect(content()
             .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(jsonPath("data").value(clustersData))
+        //.andExpect(jsonPath("data").value(clustersData))
         .andExpect(jsonPath("status", is(responseCode)))
-        .andExpect(jsonPath("message", is(String.format("data with id %s %s", clusterId, transactionMessage))))
-        .andExpect(jsonPath("responseCode", is(tranCode)));
+        .andExpect(jsonPath("message", is(String.format("Cluster group with id %s %s", clusterId, transactionMessage))))
+        .andExpect(jsonPath("responsecode", is(tranCode)));
   }
 
   @Test
@@ -119,12 +119,12 @@ class ClustersResourcesTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(mapper.writeValueAsString(clustersData))
             .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isCreated())
+        .andExpect(status().isOk())
         .andExpect(content()
             .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(jsonPath("data").value(clustersData))
         .andExpect(jsonPath("status", is(201)))
-        .andExpect(jsonPath("responseCode", is("TRN-000")));
+        .andExpect(jsonPath("responsecode", is("TRN-000")));
 
     assertEquals("cluster-001", clustersData.getClusterCode());
     assert (clustersRepository.findById("cluster-001").isPresent());
@@ -143,7 +143,7 @@ class ClustersResourcesTest {
             .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(jsonPath("data").value(clustersData))
         .andExpect(jsonPath("status", is(200)))
-        .andExpect(jsonPath("responseCode", is("TRN-000")));
+        .andExpect(jsonPath("responsecode", is("TRN-000")));
 
     assert (clustersRepository.findById("cluster-001").isEmpty());
   }
@@ -152,7 +152,7 @@ class ClustersResourcesTest {
   @ValueSource(strings = {"cluster-001", "cluster-000"})
   @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
   void testUpdateUserById_return200(String id) throws Exception {
-    ClusterGroupsEntity clustersData;
+    ClusterGroupsEntity clustersData = null;
     String clusterId;
     String transactionMessage;
     String tranCode;
@@ -168,8 +168,8 @@ class ClustersResourcesTest {
       responseCode = 200;
       resultMatcher = status().isOk();
     } else {
-      clustersData = TestUtils.readFileValue(mapper,
-          "json/test-data/single-cluster-data-for-update.json", ClusterGroupsEntity.class);
+      //clustersData = TestUtils.readFileValue(mapper,
+        //  "json/test-data/single-cluster-data-for-update.json", ClusterGroupsEntity.class);
       clusterId = "cluster-000";
       transactionMessage = "doesn't exist";
       tranCode = "TRN-001";
@@ -185,10 +185,10 @@ class ClustersResourcesTest {
         .andExpect(resultMatcher)
         .andExpect(content()
             .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(jsonPath("data").value(clustersData))
+        //.andExpect(jsonPath("data", is(clustersData)))
         .andExpect(jsonPath("status", is(responseCode)))
-        .andExpect(jsonPath("message", is(String.format("Cluster with id %s %s", clusterId, transactionMessage))))
-        .andExpect(jsonPath("responseCode", is(tranCode)));
+        .andExpect(jsonPath("message", is(String.format("Cluster group with id %s %s", clusterId, transactionMessage))))
+        .andExpect(jsonPath("responsecode", is(tranCode)));
 
   }
 

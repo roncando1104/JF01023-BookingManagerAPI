@@ -136,7 +136,7 @@ public class UsersResources {
       String generatedId = utilities.getRandomGeneratedId();
       data.setId(generatedId);
     } else {
-      throw new InvalidInputException("ID should be blank.  It will be set by the system for you.");
+      throw new InvalidInputException("ID should be blank. It will be set by the system for you.");
     }
 
     var newUser = usersRepository.save(data);

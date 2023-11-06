@@ -69,6 +69,12 @@ public class ReservationResources {
   public ResponseEntity<Object> addReservation(@RequestBody String input) throws JsonProcessingException {
     ReservationEntity data = createReservationData.getReservationData(input);
 
+    /**
+     * TODO:  Check below items for implementation before saving the booking
+     * 1. Check if the event date is still available
+     * 2. Needs to update the availability_calendar table (availability will be checked against this table)
+     * 3. Create a logic that prohibits a user from booking multiple dates in 1 or 2 months
+     */
     Executor executor = Executors.newCachedThreadPool();
     CompletableFuture.supplyAsync(() -> reservationRepository.save(data), executor);
 

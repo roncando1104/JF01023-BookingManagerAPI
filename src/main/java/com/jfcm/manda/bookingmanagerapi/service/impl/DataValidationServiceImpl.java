@@ -47,8 +47,8 @@ public class DataValidationServiceImpl implements DataValidationService {
             firstName, lastName, birthday, newUserArray[0]));
       }
     } else {
-      LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("New User with id %s is added",
-              Arrays.stream(newUser.split(",")).findFirst().orElse(null)), Constants.TRANSACTION_SUCCESS);
+      LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("New User %s %s is added",
+              firstName, lastName), Constants.TRANSACTION_SUCCESS);
     }
   }
 }
