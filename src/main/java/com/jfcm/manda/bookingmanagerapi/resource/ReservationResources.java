@@ -10,17 +10,22 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
+import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationEntity;
+import com.jfcm.manda.bookingmanagerapi.model.RoomStatusEnum;
+import com.jfcm.manda.bookingmanagerapi.repository.AvailableRoomOnDateRepository;
 import com.jfcm.manda.bookingmanagerapi.repository.ReservationRepository;
 import com.jfcm.manda.bookingmanagerapi.service.CreateReservationData;
 import com.jfcm.manda.bookingmanagerapi.service.impl.GenerateUUIDService;
 import com.jfcm.manda.bookingmanagerapi.service.impl.LoggingService;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,6 +45,8 @@ public class ReservationResources {
   @Autowired
   private ReservationRepository reservationRepository;
   @Autowired
+  private AvailableRoomOnDateRepository availableRoomOnDateRepository;
+  @Autowired
   private CreateReservationData createReservationData;
   @Autowired
   private LoggingService LOG;
@@ -50,6 +57,7 @@ public class ReservationResources {
    * {
    *     "id": "",
    *     "bookingDate": "",
+   *     "eventDate": "",
    *     "room": "",
    *     "groupName": "",
    *     "groupCode": "",
@@ -72,18 +80,44 @@ public class ReservationResources {
 
     /**
      * TODO:  Check below items for implementation before saving the booking
-     * 1. Check if the event date is still available
-     * 2. Needs to update the availability_calendar table (availability will be checked against this table)
+     * 1. Check if the event date is still available and not date from the pass - DONE
+     * 2. Needs to update the availability_calendar table (availability will be checked against this table) - DONE
      * 3. Create a logic that prohibits a user from booking multiple dates in 1 or 2 months
      */
-    Executor executor = Executors.newCachedThreadPool();
-    CompletableFuture.supplyAsync(() -> reservationRepository.save(data), executor);
+    //check if a roomtype is available on a given date
+    String result = availableRoomOnDateRepository.checkIfRoomIsAvailableOnAGivenDate(data.getRoom(), RoomStatusEnum.available.name(), String.valueOf(data.getEventDate()));
+    String resultStr = result.replaceAll("[\\[\\](){}]", "");
+    JwtAuthenticationResponse response;
+    //check if date is not from the pass. throw exception if true
+    //TODO: Add filter - date not in weekday & not within 2 weeks.
+    if (data.getEventDate().isBefore(LocalDate.now())) {
+      throw new InvalidInputException(String.format("Event date should be future dated. Event date %s has passed.", data.getEventDate()));
+    } else {
+      //if date is future, check if a room has value of 'available'
+      if (StringUtils.equalsIgnoreCase(resultStr, RoomStatusEnum.available.name())) {
+        //if available, then persist reservation to reservation and availability calendar tables
+        Executor executor = Executors.newCachedThreadPool();
+        CompletableFuture.supplyAsync(() -> reservationRepository.save(data), executor);
+        CompletableFuture.supplyAsync(() -> availableRoomOnDateRepository.updateRoomStatusOnAGivenDate
+            (data.getRoom(), RoomStatusEnum.reserved.name(), String.valueOf(data.getEventDate())), executor);
 
-    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(),
-        String.format("Reservation has been made for id %s, with status %s", data.getId(), data.getStatus()), Constants.TRANSACTION_SUCCESS);
+        LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(),
+            String.format("Reservation has been made for id %s, with status %s on %s", data.getId(),
+                data.getStatus(), data.getEventDate()), Constants.TRANSACTION_SUCCESS);
 
-    var response = getJwtAuthenticationResponse(data, HttpStatus.CREATED.value(),
-        Constants.TRANSACTION_SUCCESS, String.format("Reservation has been made for id %s, with status %s", data.getId(), data.getStatus()));
+        response = getJwtAuthenticationResponse(data, HttpStatus.CREATED.value(),
+            Constants.TRANSACTION_SUCCESS, String.format("Reservation has been made for id %s, with status %s on %s", data.getId(), data.getStatus(), data.getEventDate()));
+
+      } else {
+        //if room is no longer available on a given date, return bad request to client
+        LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(),
+            String.format("Request Denied -- %s is no longer available on %s", data.getRoom(), data.getEventDate()), Constants.TRANSACTION_FAILED);
+
+        response = getJwtAuthenticationResponse(data, HttpStatus.BAD_REQUEST.value(),
+            Constants.TRANSACTION_FAILED, String.format("Request Denied -- %s is no longer available on %s", data.getRoom(), data.getEventDate()));
+        return ResponseEntity.badRequest().body(response);
+      }
+    }
 
     return ResponseEntity.ok(response);
   }

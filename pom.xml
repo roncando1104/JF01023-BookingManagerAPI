@@ -12,7 +12,7 @@
 
   <groupId>com.jfcm.manda</groupId>
   <artifactId>BookingManagerAPI</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <name>BookingManagerAPI</name>
   <description>bookingmanagerapi</description>
   <packaging>jar</packaging>
@@ -165,6 +165,12 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-test</artifactId>
       <version>${springboot.test.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>6.0.13</version>
       <scope>test</scope>
     </dependency>
 

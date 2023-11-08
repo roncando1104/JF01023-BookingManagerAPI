@@ -2,6 +2,7 @@ DELETE FROM CLUSTERS;
 DELETE FROM RESERVATION;
 DELETE FROM SIMBAHAY_GRP;
 DELETE FROM USERS;
+//DELETE FROM AVAILABILITY_CALENDAR;
 
 INSERT INTO clusters (cluster_code, cluster_name, cluster_leader1, cluster_leader2, total_simbahay) VALUES('cluster-001', 'Cluster 1', 'Jojo Miranda', 'Victor Lim', 4);
 INSERT INTO clusters (cluster_code, cluster_name, cluster_leader1, cluster_leader2, total_simbahay) VALUES('cluster-002', 'Cluster 2', 'Ronald Cando', 'Dennis Tuando', 4);
@@ -22,3 +23,5 @@ INSERT INTO users(id, first_name, middle_name, last_name, email_add, contact_num
 INSERT INTO users(id, first_name, middle_name, last_name, email_add, contact_number, address, birthday, role, status, cluster, cluster_code, simbahay_name, simbahay_code, user_name, password) VALUES('JF-548943', 'Jojo', 'A', 'Miranda', 'jojomiranda@gmail.com', '09162341111', '111 Boni Ave. Mandaluyong', '1985-2-21', 'AE', 'ACTIVE', 'Cluster 2', 'cluster-002', 'Monday Group', 'smbhy-001', 'jojo1111', 'jojo1111');
 INSERT INTO users(id, first_name, middle_name, last_name, email_add, contact_number, address, birthday, role, status, cluster, cluster_code, simbahay_name, simbahay_code, user_name, password) VALUES('JF-166788', 'Colo', 'C', 'Jayona', 'colo@gmail.com', '09171112233', '123 Capitolyo, Pasig', '1982-05-12', 'AE', 'ACTIVE', 'Cluster 3', 'cluster-003', 'Thursday Group', 'smbhy-004', 'colo222', 'colo222');
 INSERT INTO users(id, first_name, middle_name, last_name, email_add, contact_number, address, birthday, role, status, cluster, cluster_code, simbahay_name, simbahay_code, user_name, password) VALUES('JF-112134', 'Victor', 'M', 'Lim', 'victorlim@gmail.com', '09193334444', '12 Sampaloc Manila', '1964-11-02', 'AE', 'ACTIVE', 'Cluster 4', 'cluster-004', 'Wednesday Group', 'smbhy-003', 'victor02', 'victor02');
+
+//INSERT INTO availability_calendar(id, dates, sow_room1, sow_room2, room_1, room_2) VALUES ( '20231129', '2023-11-31', 'available', 'available', 'available', 'available' );

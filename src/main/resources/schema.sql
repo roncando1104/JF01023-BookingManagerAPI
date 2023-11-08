@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS `clusters`;
 DROP TABLE IF EXISTS `reservation`;
 DROP TABLE IF EXISTS `simbahay_grp`;
 DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `availability_calendar`;
 
 CREATE TABLE `clusters` (
     `cluster_code` varchar,
@@ -60,4 +61,14 @@ CREATE TABLE `users`(
     `user_name` varchar(255),
     `password` varchar(255),
     primary key (`id`)
+);
+
+CREATE TABLE `availability_calendar`(
+                                        `id` varchar(255),
+                                        `dates` varchar(255),
+                                        `sow_room1` varchar(255),
+                                        `sow_room2` varchar(255),
+                                        `room_1` varchar(255),
+                                        `room_2` varchar(255),
+                                        PRIMARY KEY (`id`)
 );
