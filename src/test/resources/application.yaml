@@ -45,5 +45,9 @@ spring:
 token:
   session:
     expiration: 10800000 #expires in 3 hours (1000 * 180 * 60)
+booking:
+  allowable:
+    number-of-weeks: 0
+    event-days: SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY
 server:
   port: 8080

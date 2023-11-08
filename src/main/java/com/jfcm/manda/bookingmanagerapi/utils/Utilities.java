@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,19 +30,14 @@ public class Utilities {
 
   @Value("${booking.allowable.event-days}")
   private String allowedDaysToBook;
+
   public boolean isAllowedOnGivenDays(LocalDate localDate) {
     String[] listOfAllowedDaysToBook = allowedDaysToBook.split(",");
     String dayOfDate = localDate.getDayOfWeek().toString();
 
+    //if dayOfDate is within the list of days, this will be true. Otherwise, false.
     return Arrays.stream(listOfAllowedDaysToBook).anyMatch(day -> day.trim().equals(dayOfDate));
-//    var isTrue = Arrays.stream(listOfAllowedDaysToBook).anyMatch(day -> day.trim().equals(dayOfDate));
-//    if (isTrue) {
-//      return true;
-//    } else {
-//      return false;
-//    }
   }
-
 
   public static String checkAndFixInvalidJson(String input) {
     try {

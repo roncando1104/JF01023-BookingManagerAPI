@@ -21,13 +21,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jfcm.manda.bookingmanagerapi.model.ClusterGroupsEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.ClustersRepository;
+import com.jfcm.manda.bookingmanagerapi.service.impl.GenerateUUIDService;
+import com.jfcm.manda.bookingmanagerapi.service.impl.LoggingService;
 import com.jfcm.manda.bookingmanagerapi.utils.TestUtils;
+import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,6 +49,8 @@ import org.springframework.test.web.servlet.ResultMatcher;
 @Transactional
 class ClustersResourcesTest {
 
+  @InjectMocks
+  private ClustersResources clustersResources;
   private final ObjectMapper mapper = new ObjectMapper();
   @Autowired
   private MockMvc mockMvc;
