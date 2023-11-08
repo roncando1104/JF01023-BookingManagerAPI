@@ -21,6 +21,7 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,6 +32,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.jdbc.SqlConfig.TransactionMode;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 @ExtendWith(SpringExtension.class)
@@ -39,6 +41,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @Transactional
 class ReservationResourcesTest {
 
+  @Autowired
+  private ReservationResources reservationResources;
   private ObjectMapper mapper;
   @Autowired
   private MockMvc mockMvc;
@@ -53,6 +57,8 @@ class ReservationResourcesTest {
     mapper = new ObjectMapper();
     mapper.registerModule(new JavaTimeModule());
     //setup
+    //use this in other test that needs for failing scenario.
+    //ReflectionTestUtils.setField(reservationResources, "numberOfAllowedWeeks", 2);
     String replacement = "DELETE FROM AVAILABILITY_CALENDAR;\n"
         + "INSERT INTO availability_calendar(id, dates, sow_room1, sow_room2, room_1, room_2) VALUES ( '" + date.replace("-", "") + "', " + "'" + date + "'"
         + ", 'available', 'available', 'available', 'available' );";
