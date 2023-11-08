@@ -1,7 +1,7 @@
 /**
  * {@link com.jfcm.manda.bookingmanagerapi.service.impl.AvailabilityCalendarServiceImpl}.java
- * Copyright © 2023 JFCM. All rights reserved. This software is the confidential and
- * proprietary information of JFCM Mandaluyong
+ * Copyright © 2023 JFCM. All rights reserved. This software is the
+ * confidential and proprietary information of JFCM Mandaluyong
  *
  * @author Ronald Cando
  */
@@ -22,8 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tools.ant.taskdefs.Concat;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -69,7 +67,9 @@ public class AvailabilityCalendarServiceImpl implements AvailabilityCalendarServ
           map.put("availableDate", eachDay);
           jsonArray.put(map);
 
-          availableDateRepository.saveAll(List.of(new AvailabilityCalendarEntity(dateId, eachDay, RoomStatusEnum.available, RoomStatusEnum.available, RoomStatusEnum.available, RoomStatusEnum.available)));
+          availableDateRepository.saveAll(List.of(
+              new AvailabilityCalendarEntity(dateId, eachDay, RoomStatusEnum.available, RoomStatusEnum.available, RoomStatusEnum.available,
+                  RoomStatusEnum.available)));
         }
       }
     }

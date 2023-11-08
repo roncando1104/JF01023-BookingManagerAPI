@@ -7,6 +7,8 @@
  */
 package com.jfcm.manda.bookingmanagerapi.constants;
 
+import org.springframework.beans.factory.annotation.Value;
+
 public class Constants {
 
   public static final String JF_ID_PREFIX = "JF-";

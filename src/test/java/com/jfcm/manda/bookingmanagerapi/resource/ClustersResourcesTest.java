@@ -53,7 +53,7 @@ class ClustersResourcesTest {
   @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
   void testGetAllClusterGroups_return200() throws Exception {
     List<ClusterGroupsEntity> clustersData = TestUtils.readFileValue(mapper,
-        "json/test-data/cluster-data.json", List.class);
+        "json/test-data/cluster/cluster-data.json", List.class);
 
     mockMvc.perform(get("/booking-api/v1/records/all-cluster-groups")
             .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -87,7 +87,7 @@ class ClustersResourcesTest {
     ResultMatcher resultMatcher;
     if (id.equals("cluster-001")) {
       clustersData = TestUtils.readFileValue(mapper,
-          "json/test-data/single-cluster-data.json", ClusterGroupsEntity.class);
+          "json/test-data/cluster/single-cluster-data.json", ClusterGroupsEntity.class);
       assert (clustersRepository.findById("cluster-001").isPresent());
       clusterId = "cluster-001";
       transactionMessage = "successfully retrieved";
@@ -120,7 +120,7 @@ class ClustersResourcesTest {
   @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
   void testAddClusterGroup_return200() throws Exception {
     ClusterGroupsEntity clustersData = TestUtils.readFileValue(mapper,
-        "json/test-data/single-cluster-data.json", ClusterGroupsEntity.class);
+        "json/test-data/cluster/single-cluster-data.json", ClusterGroupsEntity.class);
 
     mockMvc.perform(post("/booking-api/v1/records/add-cluster")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -141,7 +141,7 @@ class ClustersResourcesTest {
   @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
   void testDeleteClusterGroup_return200() throws Exception {
     ClusterGroupsEntity clustersData = TestUtils.readFileValue(mapper,
-        "json/test-data/single-cluster-data.json", ClusterGroupsEntity.class);
+        "json/test-data/cluster/single-cluster-data.json", ClusterGroupsEntity.class);
 
     mockMvc.perform(delete("/booking-api/v1/records/delete-cluster-group/cluster-001")
             .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -167,7 +167,7 @@ class ClustersResourcesTest {
     ResultMatcher resultMatcher;
     if (id.equals("cluster-001")) {
       clustersData = TestUtils.readFileValue(mapper,
-          "json/test-data/single-cluster-data.json", ClusterGroupsEntity.class);
+          "json/test-data/cluster/single-cluster-data.json", ClusterGroupsEntity.class);
       assert (clustersRepository.findById("cluster-001").isPresent());
       clusterId = "cluster-001";
       transactionMessage = "has been updated";

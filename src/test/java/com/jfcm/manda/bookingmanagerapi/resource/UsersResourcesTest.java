@@ -66,7 +66,7 @@ class UsersResourcesTest {
   @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
   void testGetAllUsers_return200() throws Exception {
     List<UsersEntity> clustersData = TestUtils.readFileValue(mapper,
-        "json/test-data/users-data.json", List.class);
+        "json/test-data/users/users-data.json", List.class);
 
     List<UsersEntity> data = usersRepository.findAll();
     when(usersRepository.findAll()).thenReturn(data);
@@ -130,7 +130,7 @@ class UsersResourcesTest {
   @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
   void testAddNewUser_return200() throws Exception {
     UsersEntity userData = TestUtils.readFileValue(mapper,
-        "json/test-data/single-new-user-data.json", UsersEntity.class);
+        "json/test-data/users/single-new-user-data.json", UsersEntity.class);
 
     //String expected = "UsersEntity(id=JF-739953, firstName=John, middleName=Juan, lastName=Dela Cruz, emailAdd=juan.delacruz@gmail.com, contactNumber=09279471111, address=111 Boni Ave., Mandaluyong, birthday=1987-12-24, role=AE, status=ACTIVE, cluster=Cluster 1, clusterCode=cluster-001, simbahayName=Saturday Group, simbahayCode=smbhy-007, userName=juan1224, password=juan1224";
 
@@ -152,7 +152,7 @@ class UsersResourcesTest {
   @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
   void testAddNewUser_withId_throwsException() throws Exception {
     UsersEntity userData = TestUtils.readFileValue(mapper,
-        "json/test-data/single-user-with-id-data.json", UsersEntity.class);
+        "json/test-data/users/single-user-with-id-data.json", UsersEntity.class);
 
     // Assertions.assertThatThrownBy(() ->
     mockMvc.perform(post("/booking-api/v1/records/add-user")

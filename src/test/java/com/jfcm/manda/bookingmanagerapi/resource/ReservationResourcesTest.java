@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationEntity;
 import com.jfcm.manda.bookingmanagerapi.utils.TestUtils;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +34,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
+@Transactional
 class ReservationResourcesTest {
 
   private ObjectMapper mapper;
@@ -54,7 +56,7 @@ class ReservationResourcesTest {
 
     TestUtils.fileReaderAndWriter("src/test/resources", "availability-data.sql", replacement);
     ReservationEntity reservationData = TestUtils.readFileValue(mapper,
-        "json/test-data/reservation-data.json", ReservationEntity.class);
+        "json/test-data/reservation/reservation-data.json", ReservationEntity.class);
 
     reservationData.setEventDate(LocalDate.now().plusDays(2));
     //action

@@ -55,14 +55,13 @@ public class AvailableDatesResources {
   @GetMapping(value = "/available-room/{date}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getAvailableRoomsOnAGivenDate(@PathVariable(value = "date") String date) {
     List<AvailabilityCalendarEntity> availableRooms = availableDateRepository.checkRoomsAvailableOnAGivenDate(date);
-    //NOTE: This is the sample query of getting the status of a room availability on a given date.
+    //NOTE:
     // Will use this to check if the room a user is booking on a given date is still available from availability_calendar table
     // Use this logic below in ReservationResources class before saving the reservation
     //String result = availableRoomOnDateRepository.checkIfRoomIsAvailableOnAGivenDate("room1", "available", "2023-11-04");
-    //System.out.println("RES: " + result);
 
     var response = getJwtAuthenticationResponse(availableRooms, HttpStatus.OK.value(),
-        String.format("Check the availability: room1 is %s | room2 is %s | sow room1 is %s | sow room2 is %s",
+        String.format("Check the availability: Room-1 is %s | Room-2 is %s | Sow Room-1 is %s | Sow Room-2 is %s",
             availableRooms.stream().findAny().map(AvailabilityCalendarEntity::getRoom1).orElse(RoomStatusEnum.not_define),
             availableRooms.stream().findAny().map(AvailabilityCalendarEntity::getRoom2).orElse(RoomStatusEnum.not_define),
             availableRooms.stream().findAny().map(AvailabilityCalendarEntity::getSowRoom1).orElse(RoomStatusEnum.not_define),
@@ -70,7 +69,6 @@ public class AvailableDatesResources {
     return ResponseEntity.ok(response);
   }
 
-  //TODO: Create method that takes room column name as parameter and check its availability
   private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String msg) {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
