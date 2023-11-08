@@ -9,23 +9,16 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.assertj.core.api.Assertions;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
 import com.jfcm.manda.bookingmanagerapi.model.UsersEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
 import com.jfcm.manda.bookingmanagerapi.service.impl.GenerateUUIDService;
@@ -161,12 +154,12 @@ class UsersResourcesTest {
     UsersEntity userData = TestUtils.readFileValue(mapper,
         "json/test-data/single-user-with-id-data.json", UsersEntity.class);
 
-   // Assertions.assertThatThrownBy(() ->
-        mockMvc.perform(post("/booking-api/v1/records/add-user")
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(mapper.writeValueAsString(userData)));
-        //.hasCauseInstanceOf(InvalidInputException.class)
-        //.hasMessageContaining("ID should be blank.  It will be set by the system for you.");
+    // Assertions.assertThatThrownBy(() ->
+    mockMvc.perform(post("/booking-api/v1/records/add-user")
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .content(mapper.writeValueAsString(userData)));
+    //.hasCauseInstanceOf(InvalidInputException.class)
+    //.hasMessageContaining("ID should be blank.  It will be set by the system for you.");
 
     assertEquals("JF-111111", userData.getId());
   }
