@@ -29,4 +29,37 @@ public class TestUtils {
       throw new RuntimeException(e);
     }
   }
+
+  public static void fileReaderAndWriter(String folderPath, String fileName, String strReplacement) {
+    File file = new File(folderPath);
+    String absolutePath = file.getAbsolutePath();
+    FileWriter fileWriter = null;
+    String oldContent = "";
+    try {
+      FileReader fileReader = new FileReader(absolutePath + "/" + fileName);
+      BufferedReader bufferReader = new BufferedReader(fileReader);
+      String fileData;
+
+      try {
+        while ((fileData = bufferReader.readLine()) != null) {
+          oldContent = oldContent + fileData + System.lineSeparator();
+        }
+        fileWriter = new FileWriter(absolutePath + "/" + fileName);
+        fileWriter.write(strReplacement);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } finally {
+        try {
+          //Closing the resources
+          fileWriter.close();
+          fileReader.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+  }
 }

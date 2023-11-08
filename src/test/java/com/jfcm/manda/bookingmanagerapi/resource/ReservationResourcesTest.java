@@ -45,38 +45,7 @@ class ReservationResourcesTest {
   @Autowired
   private MockMvc mockMvc;
 
-  public void fileReaderAndWriter(String folderPath, String fileName, String strReplacement) {
-    File file = new File(folderPath);
-    String absolutePath = file.getAbsolutePath();
-    FileWriter fileWriter = null;
-    String oldContent = "";
-    try {
-      FileReader fileReader = new FileReader(absolutePath + "/" + fileName);
-      BufferedReader bufferReader = new BufferedReader(fileReader);
-      String fileData;
 
-      try {
-        while ((fileData = bufferReader.readLine()) != null) {
-          oldContent = oldContent + fileData + System.lineSeparator();
-        }
-        fileWriter = new FileWriter(absolutePath + "/" + fileName);
-        fileWriter.write(strReplacement);
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      } finally {
-        try {
-          //Closing the resources
-          fileWriter.close();
-          fileReader.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-  }
 
   @Test
   @Sql(scripts = {"/availability-data.sql"}, config = @SqlConfig(encoding = "utf-8", transactionMode = TransactionMode.ISOLATED))
@@ -90,7 +59,7 @@ class ReservationResourcesTest {
         + "INSERT INTO availability_calendar(id, dates, sow_room1, sow_room2, room_1, room_2) VALUES ( '" + date.replace("-", "") + "', " + "'" + date + "'"
         + ", 'available', 'available', 'available', 'available' );";
 
-    fileReaderAndWriter("src/test/resources", "availability-data.sql", replacement);
+    TestUtils.fileReaderAndWriter("src/test/resources", "availability-data.sql", replacement);
     ReservationEntity reservationData = TestUtils.readFileValue(mapper,
         "json/test-data/reservation-data.json", ReservationEntity.class);
 
@@ -107,7 +76,7 @@ class ReservationResourcesTest {
     assertNotNull(result.getResponse().getContentAsString());
   }
 
-  //NOTE: This method fails the test.  The fileReaderAndWriter cannot be static.  If it fails, just build the project and execute mvn clean install
+  //NOTE: This method fails the test.  If it fails, just build the project and execute mvn clean install
 //  @AfterAll
 //  static void afterAllTest() {
 //    String oldString = "DELETE FROM AVAILABILITY_CALENDAR;\n"
