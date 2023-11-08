@@ -18,6 +18,7 @@ import com.jfcm.manda.bookingmanagerapi.repository.ReservationRepository;
 import com.jfcm.manda.bookingmanagerapi.service.CreateReservationData;
 import com.jfcm.manda.bookingmanagerapi.service.impl.GenerateUUIDService;
 import com.jfcm.manda.bookingmanagerapi.service.impl.LoggingService;
+import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -27,6 +28,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +52,11 @@ public class ReservationResources {
   private CreateReservationData createReservationData;
   @Autowired
   private LoggingService LOG;
+  @Autowired
+  private Utilities utilities;
+
+  @Value("#{new Long('${booking.allowable.number-of-weeks}')}")
+  private long numberOfAllowedWeeks;
 
   /**
    * @request
@@ -88,10 +95,17 @@ public class ReservationResources {
     String result = availableRoomOnDateRepository.checkIfRoomIsAvailableOnAGivenDate(data.getRoom(), RoomStatusEnum.available.name(), String.valueOf(data.getEventDate()));
     String resultStr = result.replaceAll("[\\[\\](){}]", "");
     JwtAuthenticationResponse response;
-    //check if date is not from the pass. throw exception if true
-    //TODO: Add filter - date not in weekday & not within 2 weeks.
-    if (data.getEventDate().isBefore(LocalDate.now())) {
-      throw new InvalidInputException(String.format("Event date should be future dated. Event date %s has passed.", data.getEventDate()));
+
+    //check if the date is within the allowed days to book an event
+    boolean isDayAllowed = utilities.isAllowedOnGivenDays(data.getEventDate());
+    if (!isDayAllowed) {
+      //if the day is not within the allowed list of days, isDayAllowed return falls and throws below exception
+      throw new InvalidInputException(String.format("%s falls on %s.  You cannot book on this day!", data.getEventDate(), data.getEventDate().getDayOfWeek().toString()));
+    }
+
+    //check if date is not from the pass and within # of weeks period. throw exception if true
+    if (data.getEventDate().isBefore(LocalDate.now().plusWeeks(numberOfAllowedWeeks))) {
+      throw new InvalidInputException(String.format("Event date should be future dated or not within %s week(s) period. Event date %s doesn't meet the condition.", numberOfAllowedWeeks, data.getEventDate()));
     } else {
       //if date is future, check if a room has value of 'available'
       if (StringUtils.equalsIgnoreCase(resultStr, RoomStatusEnum.available.name())) {
@@ -122,6 +136,11 @@ public class ReservationResources {
     return ResponseEntity.ok(response);
   }
 
+  /**
+   * If a delete method will be created, consider the ff:
+   * - Deleting a reservation should also reset the room involved to available in availability_calendar table
+   * - Deleting or updating a room availability in availability_calendar table should not be allowed
+   */
   private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String respCode, String msg) {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");

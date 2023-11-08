@@ -41,6 +41,13 @@ public class AvailableDatesResources {
   @Autowired
   private GenerateUUIDService generateUUIDService;
 
+  /**
+   * @implNote This resource will only retrieve dates from availability_calendar.
+   * @implNote Deleting, updating, & posting is not allowed as it is managed in reservation endpoints
+   * @implNote Populating the availability_calendar with dates is handled through
+   * {@link com.jfcm.manda.bookingmanagerapi.service.impl.AvailabilityCalendarServiceImpl}
+   */
+
   @GetMapping(value = "/all-dates", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getAllDates() throws JsonProcessingException {
     List<AvailabilityCalendarEntity> data = availableDateRepository.findAll();

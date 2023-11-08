@@ -50,5 +50,9 @@ springdoc:
 token:
   session:
     expiration: 10800000 #expires in 3 hours (1000 * 180 * 60)
+booking:
+  allowable:
+    number-of-weeks: 2
+    event-days: SUNDAY,SATURDAY,FRIDAY,TUESDAY,THURSDAY
 server:
   port: 8080
