@@ -1,2 +1,2 @@
 DELETE FROM AVAILABILITY_CALENDAR;
-INSERT INTO availability_calendar(id, dates, sow_room1, sow_room2, room_1, room_2) VALUES ( '20231111', '2023-11-11', 'available', 'available', 'available', 'available' );
+INSERT INTO availability_calendar(id, dates, sow_room1, sow_room2, room_1, room_2) VALUES ( '20231112', '2023-11-12', 'available', 'available', 'available', 'available' );

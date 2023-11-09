@@ -33,7 +33,7 @@ public class CreateReservationDataImpl implements CreateReservationData {
     String clientId = requestDataService.getClientIdByName(data.getBookedBy());
 
     data.setId(bookingId);
-    data.setBookingDate(LocalDate.now());
+    data.setBookingDate(Utilities.formatDate(LocalDate.now()));
 
     data.setClientId(clientId);
     String totalFee = data.isWithFee() ? Utilities.formatNumber(1500) : Utilities.formatNumber(0);

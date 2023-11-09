@@ -15,7 +15,9 @@ import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +56,13 @@ public class Utilities {
     DecimalFormat df = new DecimalFormat("###,###,###.00");
 
     return df.format(value);
+  }
+
+  public static LocalDate formatDate(LocalDate date) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    String dateToStr = String.valueOf(date);
+
+    return LocalDate.parse(dateToStr, formatter);
   }
 
   public String getRandomGeneratedId() {

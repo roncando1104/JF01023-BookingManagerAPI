@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
 import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
+import com.jfcm.manda.bookingmanagerapi.exception.MultipleBookingException;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationEntity;
 import com.jfcm.manda.bookingmanagerapi.model.RoomStatusEnum;
 import com.jfcm.manda.bookingmanagerapi.repository.AvailableRoomOnDateRepository;
@@ -18,6 +19,7 @@ import com.jfcm.manda.bookingmanagerapi.repository.ReservationRepository;
 import com.jfcm.manda.bookingmanagerapi.service.CreateReservationData;
 import com.jfcm.manda.bookingmanagerapi.service.impl.GenerateUUIDService;
 import com.jfcm.manda.bookingmanagerapi.service.impl.LoggingService;
+import com.jfcm.manda.bookingmanagerapi.service.impl.RequestDataService;
 import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,6 +52,8 @@ public class ReservationResources {
   private AvailableRoomOnDateRepository availableRoomOnDateRepository;
   @Autowired
   private CreateReservationData createReservationData;
+  @Autowired
+  private RequestDataService requestDataService;
   @Autowired
   private LoggingService LOG;
   @Autowired
@@ -84,12 +88,17 @@ public class ReservationResources {
   @PostMapping(value = "/add-reservation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> addReservation(@RequestBody String input) throws JsonProcessingException {
     ReservationEntity data = createReservationData.getReservationData(input);
+    var monthlyBookingCount = requestDataService.checkIfMultipleBookings(data.getClientId(), data.getEventDate(), data.getBookedBy(), data.getGroupCode());
 
+    //Will prohibit a Client with same group to make multiple bookings in same month
+    if (monthlyBookingCount == 1) {
+      throw new MultipleBookingException("You are only allowed to book once a month from the selected month.");
+    }
     /**
      * TODO:  Check below items for implementation before saving the booking
      * 1. Check if the event date is still available and not date from the pass - DONE
      * 2. Needs to update the availability_calendar table (availability will be checked against this table) - DONE
-     * 3. Create a logic that prohibits a user from booking multiple dates in 1 or 2 months
+     * 3. Create a logic that prohibits a user from booking multiple dates in 1 or 2 months - DONE for 1 Month filter
      */
     //check if a roomtype is available on a given date
     String result = availableRoomOnDateRepository.checkIfRoomIsAvailableOnAGivenDate(data.getRoom(), RoomStatusEnum.available.name(), String.valueOf(data.getEventDate()));

@@ -156,7 +156,7 @@ class ReservationResourcesTest {
     TestUtils.fileReaderAndWriter("src/test/resources", "availability-data.sql", replacement);
     ReservationEntity reservationData = TestUtils.readFileValue(mapper,
         "json/test-data/reservation/reservation-data.json", ReservationEntity.class);
-
+    //this date will not be found in database, hence it's not available
     reservationData.setEventDate(LocalDate.now().plusDays(15));
     //action
     var result = mockMvc.perform(post("/booking-api/v1/reservations/add-reservation")
@@ -164,6 +164,37 @@ class ReservationResourcesTest {
             .content(mapper.writeValueAsString(reservationData))
             .accept(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isBadRequest())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+
+    assertNotNull(result.getResponse().getContentAsString());
+  }
+
+  @Test
+  @Sql(scripts = {"/availability-data.sql"}, config = @SqlConfig(encoding = "utf-8", transactionMode = TransactionMode.ISOLATED))
+  @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+  void testAddReservation_noBookingFoundForClientId_return400() throws Exception {
+    String date = String.valueOf(LocalDate.now().plusDays(2));
+    mapper = new ObjectMapper();
+    mapper.registerModule(new JavaTimeModule());
+    //setup
+    //change the allowable week to book to 2 weeks
+    ReflectionTestUtils.setField(reservationResources, "numberOfAllowedWeeks", 0);
+    String replacement = "DELETE FROM AVAILABILITY_CALENDAR;\n"
+        + "INSERT INTO availability_calendar(id, dates, sow_room1, sow_room2, room_1, room_2) VALUES ( '" + date.replace("-", "") + "', " + "'" + date + "'"
+        + ", 'available', 'available', 'available', 'available' );";
+
+    TestUtils.fileReaderAndWriter("src/test/resources", "availability-data.sql", replacement);
+    ReservationEntity reservationData = TestUtils.readFileValue(mapper,
+        "json/test-data/reservation/reservation-data-not-found.json", ReservationEntity.class);
+    //this date will not be found in database, hence it's not available
+    reservationData.setEventDate(LocalDate.now().plusDays(15));
+    //action
+    var result = mockMvc.perform(post("/booking-api/v1/reservations/add-reservation")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(mapper.writeValueAsString(reservationData))
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isForbidden())
         .andExpect(content()
             .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 

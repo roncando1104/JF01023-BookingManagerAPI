@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] (2023-11-10)
+- Added logic to prohibit a client from making multiple bookings in same month with same group, client id, and booking person
+- Added exception handler for multiple bookings
+- Added UT to handle no booking for a specific client id
+
 ## [1.0.5] (2023-11-09)
 - Added logic for allowable days for booking
 - Added restriction of booking within weeks configured in application.yaml
