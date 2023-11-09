@@ -21,8 +21,6 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,7 +44,7 @@ class ReservationResourcesTest {
   private ObjectMapper mapper;
   @Autowired
   private MockMvc mockMvc;
-  @Mock
+  @Autowired
   private Utilities utilities;
 
   @Test
@@ -57,8 +55,8 @@ class ReservationResourcesTest {
     mapper = new ObjectMapper();
     mapper.registerModule(new JavaTimeModule());
     //setup
-    //use this in other test that needs for failing scenario.
-    //ReflectionTestUtils.setField(reservationResources, "numberOfAllowedWeeks", 2);
+    ReflectionTestUtils.setField(utilities, "allowedDaysToBook", "SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY");
+    ReflectionTestUtils.setField(reservationResources, "numberOfAllowedWeeks", 0);
     String replacement = "DELETE FROM AVAILABILITY_CALENDAR;\n"
         + "INSERT INTO availability_calendar(id, dates, sow_room1, sow_room2, room_1, room_2) VALUES ( '" + date.replace("-", "") + "', " + "'" + date + "'"
         + ", 'available', 'available', 'available', 'available' );";
@@ -74,6 +72,98 @@ class ReservationResourcesTest {
             .content(mapper.writeValueAsString(reservationData))
             .accept(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isOk())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+
+    assertNotNull(result.getResponse().getContentAsString());
+  }
+
+  @Test
+  @Sql(scripts = {"/availability-data.sql"}, config = @SqlConfig(encoding = "utf-8", transactionMode = TransactionMode.ISOLATED))
+  @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+  void testAddReservation_dateFallsIntoADayNotAllowedToBook_return403_throwsInvalidInputException() throws Exception {
+    String date = String.valueOf(LocalDate.now().plusDays(2));
+    mapper = new ObjectMapper();
+    mapper.registerModule(new JavaTimeModule());
+    //setup
+    ReflectionTestUtils.setField(utilities, "allowedDaysToBook", "mock1,mock2");
+    String replacement = "DELETE FROM AVAILABILITY_CALENDAR;\n"
+        + "INSERT INTO availability_calendar(id, dates, sow_room1, sow_room2, room_1, room_2) VALUES ( '" + date.replace("-", "") + "', " + "'" + date + "'"
+        + ", 'available', 'available', 'available', 'available' );";
+
+    TestUtils.fileReaderAndWriter("src/test/resources", "availability-data.sql", replacement);
+    ReservationEntity reservationData = TestUtils.readFileValue(mapper,
+        "json/test-data/reservation/reservation-data.json", ReservationEntity.class);
+
+    reservationData.setEventDate(LocalDate.now().plusDays(2));
+    //action
+    var result = mockMvc.perform(post("/booking-api/v1/reservations/add-reservation")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(mapper.writeValueAsString(reservationData))
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isForbidden())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+
+    assertNotNull(result.getResponse().getContentAsString());
+  }
+
+  @Test
+  @Sql(scripts = {"/availability-data.sql"}, config = @SqlConfig(encoding = "utf-8", transactionMode = TransactionMode.ISOLATED))
+  @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+  void testAddReservation_dateIsWithinWeeksNotAllowedToBook_return403_throwsInvalidInputException() throws Exception {
+    String date = String.valueOf(LocalDate.now().plusDays(2));
+    mapper = new ObjectMapper();
+    mapper.registerModule(new JavaTimeModule());
+    //setup
+    //change the allowable week to book to 2 weeks
+    ReflectionTestUtils.setField(reservationResources, "numberOfAllowedWeeks", 2);
+    String replacement = "DELETE FROM AVAILABILITY_CALENDAR;\n"
+        + "INSERT INTO availability_calendar(id, dates, sow_room1, sow_room2, room_1, room_2) VALUES ( '" + date.replace("-", "") + "', " + "'" + date + "'"
+        + ", 'available', 'available', 'available', 'available' );";
+
+    TestUtils.fileReaderAndWriter("src/test/resources", "availability-data.sql", replacement);
+    ReservationEntity reservationData = TestUtils.readFileValue(mapper,
+        "json/test-data/reservation/reservation-data.json", ReservationEntity.class);
+
+    reservationData.setEventDate(LocalDate.now().plusDays(2));
+    //action
+    var result = mockMvc.perform(post("/booking-api/v1/reservations/add-reservation")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(mapper.writeValueAsString(reservationData))
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isForbidden())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+
+    assertNotNull(result.getResponse().getContentAsString());
+  }
+
+  @Test
+  @Sql(scripts = {"/availability-data.sql"}, config = @SqlConfig(encoding = "utf-8", transactionMode = TransactionMode.ISOLATED))
+  @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
+  void testAddReservation_dateIsNoLongerAvailable_return400() throws Exception {
+    String date = String.valueOf(LocalDate.now().plusDays(2));
+    mapper = new ObjectMapper();
+    mapper.registerModule(new JavaTimeModule());
+    //setup
+    //change the allowable week to book to 2 weeks
+    ReflectionTestUtils.setField(reservationResources, "numberOfAllowedWeeks", 0);
+    String replacement = "DELETE FROM AVAILABILITY_CALENDAR;\n"
+        + "INSERT INTO availability_calendar(id, dates, sow_room1, sow_room2, room_1, room_2) VALUES ( '" + date.replace("-", "") + "', " + "'" + date + "'"
+        + ", 'available', 'available', 'available', 'available' );";
+
+    TestUtils.fileReaderAndWriter("src/test/resources", "availability-data.sql", replacement);
+    ReservationEntity reservationData = TestUtils.readFileValue(mapper,
+        "json/test-data/reservation/reservation-data.json", ReservationEntity.class);
+
+    reservationData.setEventDate(LocalDate.now().plusDays(15));
+    //action
+    var result = mockMvc.perform(post("/booking-api/v1/reservations/add-reservation")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(mapper.writeValueAsString(reservationData))
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isBadRequest())
         .andExpect(content()
             .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 
