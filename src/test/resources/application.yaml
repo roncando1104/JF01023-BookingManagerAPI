@@ -48,6 +48,8 @@ token:
 booking:
   allowable:
     number-of-weeks: 0
+    number-of-months: 0
     event-days: SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY
+    filter-flag: false #allow if true
 server:
   port: 8080

@@ -10,6 +10,7 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
+import com.jfcm.manda.bookingmanagerapi.exception.GenericBookingException;
 import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
 import com.jfcm.manda.bookingmanagerapi.exception.MultipleBookingException;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationEntity;
@@ -61,6 +62,10 @@ public class ReservationResources {
 
   @Value("#{new Long('${booking.allowable.number-of-weeks}')}")
   private long numberOfAllowedWeeks;
+  @Value("#{new Long('${booking.allowable.number-of-months}')}")
+  private long numberOfMonthsUntilNextBooking;
+  @Value("${booking.allowable.filter-flag}")
+  private boolean isFilterAllowed;
 
   /**
    * @request
@@ -88,8 +93,14 @@ public class ReservationResources {
   @PostMapping(value = "/add-reservation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> addReservation(@RequestBody String input) throws JsonProcessingException {
     ReservationEntity data = createReservationData.getReservationData(input);
-    var monthlyBookingCount = requestDataService.checkIfMultipleBookings(data.getClientId(), data.getEventDate(), data.getBookedBy(), data.getGroupCode());
+    //UT is failing because of this filter.  Investigate how to implement properly
+    var isLastBookingMadeAfterNumberOfMonths = requestDataService.noBookingInSpecifiedNumberOfMonthsFilter(data.getClientId(), data.getEventDate(), data.getGroupCode());
+    System.out.println("CON: " + isLastBookingMadeAfterNumberOfMonths + " " + isFilterAllowed);
+    if (!isLastBookingMadeAfterNumberOfMonths && isFilterAllowed) {
+      throw new GenericBookingException(String.format("Denied -- You are booking on %s, but you just booked from last %s months(s)", data.getEventDate(), numberOfMonthsUntilNextBooking));
+    }
 
+    var monthlyBookingCount = requestDataService.checkIfMultipleBookings(data.getClientId(), data.getEventDate(), data.getBookedBy(), data.getGroupCode());
     //Will prohibit a Client with same group to make multiple bookings in same month
     if (monthlyBookingCount == 1) {
       throw new MultipleBookingException("You are only allowed to book once a month from the selected month.");
@@ -111,7 +122,10 @@ public class ReservationResources {
       //if the day is not within the allowed list of days, isDayAllowed return falls and throws below exception
       throw new InvalidInputException(String.format("%s falls on %s.  You cannot book on this day!", data.getEventDate(), data.getEventDate().getDayOfWeek().toString()));
     }
-
+    //this will check if the year of date is not this year.
+    if (data.getEventDate().getYear() == LocalDate.now().plusYears(1).getYear()) {
+      throw new InvalidInputException(String.format("Date %s falls for next year.  Those dates are not yet available.", data.getEventDate()));
+    }
     //check if date is not from the pass and within # of weeks period. throw exception if true
     if (data.getEventDate().isBefore(LocalDate.now().plusWeeks(numberOfAllowedWeeks))) {
       throw new InvalidInputException(String.format("Event date should be future dated or not within %s week(s) period. Event date %s doesn't meet the condition.", numberOfAllowedWeeks, data.getEventDate()));

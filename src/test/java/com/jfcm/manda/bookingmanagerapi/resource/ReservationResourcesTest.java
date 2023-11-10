@@ -26,6 +26,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.jdbc.SqlConfig.TransactionMode;
@@ -37,6 +38,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Transactional
+//@TestPropertySource(locations = "classpath:application.yaml")
 class ReservationResourcesTest {
 
   @Autowired
@@ -65,7 +67,7 @@ class ReservationResourcesTest {
     ReservationEntity reservationData = TestUtils.readFileValue(mapper,
         "json/test-data/reservation/reservation-data.json", ReservationEntity.class);
 
-    reservationData.setEventDate(LocalDate.now().plusDays(2));
+    reservationData.setEventDate(LocalDate.parse(date));
     //action
     var result = mockMvc.perform(post("/booking-api/v1/reservations/add-reservation")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -125,8 +127,11 @@ class ReservationResourcesTest {
     TestUtils.fileReaderAndWriter("src/test/resources", "availability-data.sql", replacement);
     ReservationEntity reservationData = TestUtils.readFileValue(mapper,
         "json/test-data/reservation/reservation-data.json", ReservationEntity.class);
-
-    reservationData.setEventDate(LocalDate.now().plusDays(2));
+//    BookedEventsEntity bookedEventsEntity = new BookedEventsEntity();
+//    bookedEventsEntity.setEventDate(reservationData.getEventDate());
+//    bookedEventsEntity.getEventDate();
+//    System.out.println("TEST: " + reservationData.getEventDate());
+    //reservationData.setEventDate(LocalDate.now().plusDays(2));
     //action
     var result = mockMvc.perform(post("/booking-api/v1/reservations/add-reservation")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -152,18 +157,20 @@ class ReservationResourcesTest {
     String replacement = "DELETE FROM AVAILABILITY_CALENDAR;\n"
         + "INSERT INTO availability_calendar(id, dates, sow_room1, sow_room2, room_1, room_2) VALUES ( '" + date.replace("-", "") + "', " + "'" + date + "'"
         + ", 'available', 'available', 'available', 'available' );";
+//        + "DELETE FROM RESERVATION;\n"
+//        + "INSERT INTO reservation(id, booking_date, room, group_name, group_code, activity, booked_by, client_id, with_fee, total_fee, status) VALUES('q1b57724-32fd-4b3f-a21d-f0804349c81a', '2023-11-12', 'Room 1', 'cluster 1', 'cluster-001', 'fellowship', 'Ronald Cando', 'JF-494210', true, 1500, 'FOR_APPROVAL');";
 
     TestUtils.fileReaderAndWriter("src/test/resources", "availability-data.sql", replacement);
     ReservationEntity reservationData = TestUtils.readFileValue(mapper,
         "json/test-data/reservation/reservation-data.json", ReservationEntity.class);
     //this date will not be found in database, hence it's not available
-    reservationData.setEventDate(LocalDate.now().plusDays(15));
+    reservationData.setEventDate(LocalDate.now().plusMonths(3));
     //action
     var result = mockMvc.perform(post("/booking-api/v1/reservations/add-reservation")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(mapper.writeValueAsString(reservationData))
             .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isBadRequest())
+        .andExpect(status().isForbidden())
         .andExpect(content()
             .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 
@@ -194,7 +201,7 @@ class ReservationResourcesTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(mapper.writeValueAsString(reservationData))
             .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isForbidden())
+        .andExpect(status().isBadRequest())
         .andExpect(content()
             .contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 

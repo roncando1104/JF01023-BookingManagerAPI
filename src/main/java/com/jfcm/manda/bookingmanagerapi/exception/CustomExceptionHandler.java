@@ -84,6 +84,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
   }
 
+  @ExceptionHandler(GenericBookingException.class)
+  public ResponseEntity<ErrorResponse> handlesGenericBookingException(GenericBookingException ex, WebRequest request) {
+
+    var error = ErrorResponse.builder()
+        .timestamp(dateNow)
+        .status(HttpStatus.FORBIDDEN.value())
+        .responsecode(Constants.TRANSACTION_FAILED)
+        .message(ex.getMessage())
+        .path(request.getDescription(false))
+        .build();
+
+    return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+  }
+
 //  @Override
 //  public ResponseEntity<Object> handleMethodArgumentNotValid(
 //      DataAlreadyExistException ex, HttpHeaders headers,

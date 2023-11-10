@@ -8,6 +8,7 @@
  */
 package com.jfcm.manda.bookingmanagerapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,6 +31,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "reservation")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BookedEventsEntity {
 
   @Id
