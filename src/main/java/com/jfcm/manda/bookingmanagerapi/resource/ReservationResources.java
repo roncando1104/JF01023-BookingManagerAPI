@@ -9,7 +9,7 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
-import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
+import com.jfcm.manda.bookingmanagerapi.dao.response.CommonResponse;
 import com.jfcm.manda.bookingmanagerapi.exception.GenericBookingException;
 import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
 import com.jfcm.manda.bookingmanagerapi.exception.MultipleBookingException;
@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -64,8 +65,8 @@ public class ReservationResources {
   private long numberOfAllowedWeeks;
   @Value("#{new Long('${booking.allowable.number-of-months}')}")
   private long numberOfMonthsUntilNextBooking;
-  @Value("${booking.allowable.filter-flag}")
-  private boolean isFilterAllowed;
+  //@Value("${booking.allowable.filter-flag.enabled}")
+  //private boolean isFilterAllowed;
 
   /**
    * @request
@@ -93,12 +94,13 @@ public class ReservationResources {
   @PostMapping(value = "/add-reservation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> addReservation(@RequestBody String input) throws JsonProcessingException {
     ReservationEntity data = createReservationData.getReservationData(input);
-    //UT is failing because of this filter.  Investigate how to implement properly
-    var isLastBookingMadeAfterNumberOfMonths = requestDataService.noBookingInSpecifiedNumberOfMonthsFilter(data.getClientId(), data.getEventDate(), data.getGroupCode());
-    System.out.println("CON: " + isLastBookingMadeAfterNumberOfMonths + " " + isFilterAllowed);
-    if (!isLastBookingMadeAfterNumberOfMonths && isFilterAllowed) {
-      throw new GenericBookingException(String.format("Denied -- You are booking on %s, but you just booked from last %s months(s)", data.getEventDate(), numberOfMonthsUntilNextBooking));
-    }
+    //This implementation was changed.  Checked if it still works properly.  Removed if ok.
+    //var isLastBookingMadeAfterNumberOfMonths = requestDataService.noBookingInSpecifiedNumberOfMonthsFilter(data.getClientId(), data.getEventDate(), data.getGroupCode());
+//    System.out.println("CON: " + isLastBookingMadeAfterNumberOfMonths + " " + isFilterAllowed);
+//    if (!isLastBookingMadeAfterNumberOfMonths && isFilterAllowed) {
+//      throw new GenericBookingException(String.format("Denied -- You are booking on %s, but you just booked from last %s months(s)", data.getEventDate(), numberOfMonthsUntilNextBooking));
+//    }
+    checkIfBookingIsAllowed(data);
 
     var monthlyBookingCount = requestDataService.checkIfMultipleBookings(data.getClientId(), data.getEventDate(), data.getBookedBy(), data.getGroupCode());
     //Will prohibit a Client with same group to make multiple bookings in same month
@@ -109,12 +111,12 @@ public class ReservationResources {
      * TODO:  Check below items for implementation before saving the booking
      * 1. Check if the event date is still available and not date from the pass - DONE
      * 2. Needs to update the availability_calendar table (availability will be checked against this table) - DONE
-     * 3. Create a logic that prohibits a user from booking multiple dates in 1 or 2 months - DONE for 1 Month filter
+     * 3. Create a logic that prohibits a user from booking multiple dates in 1 or 2 months - DONE configurable using numberOfMonthsUntilNextBooking
      */
     //check if a roomtype is available on a given date
     String result = availableRoomOnDateRepository.checkIfRoomIsAvailableOnAGivenDate(data.getRoom(), RoomStatusEnum.available.name(), String.valueOf(data.getEventDate()));
     String resultStr = result.replaceAll("[\\[\\](){}]", "");
-    JwtAuthenticationResponse response;
+    CommonResponse response;
 
     //check if the date is within the allowed days to book an event
     boolean isDayAllowed = utilities.isAllowedOnGivenDays(data.getEventDate());
@@ -142,7 +144,7 @@ public class ReservationResources {
             String.format("Reservation has been made for id %s, with status %s on %s", data.getId(),
                 data.getStatus(), data.getEventDate()), Constants.TRANSACTION_SUCCESS);
 
-        response = getJwtAuthenticationResponse(data, HttpStatus.CREATED.value(),
+        response = getResponse(data, HttpStatus.CREATED.value(),
             Constants.TRANSACTION_SUCCESS, String.format("Reservation has been made for id %s, with status %s on %s", data.getId(), data.getStatus(), data.getEventDate()));
 
       } else {
@@ -150,7 +152,7 @@ public class ReservationResources {
         LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(),
             String.format("Request Denied -- %s is no longer available on %s", data.getRoom(), data.getEventDate()), Constants.TRANSACTION_FAILED);
 
-        response = getJwtAuthenticationResponse(data, HttpStatus.BAD_REQUEST.value(),
+        response = getResponse(data, HttpStatus.BAD_REQUEST.value(),
             Constants.TRANSACTION_FAILED, String.format("Request Denied -- %s is no longer available on %s", data.getRoom(), data.getEventDate()));
         return ResponseEntity.badRequest().body(response);
       }
@@ -159,21 +161,32 @@ public class ReservationResources {
     return ResponseEntity.ok(response);
   }
 
+  @ConditionalOnProperty(value = "booking.allowable.filter-flag.enabled", havingValue = "true")
+  public void checkIfBookingIsAllowed(ReservationEntity data) {
+    var isLastBookingMadeAfterNumberOfMonths = requestDataService.noBookingInSpecifiedNumberOfMonthsFilter(data.getClientId(),
+        data.getEventDate(), data.getGroupCode());
+
+    if (Boolean.FALSE.equals(isLastBookingMadeAfterNumberOfMonths)) {
+      throw new GenericBookingException(String.format("Denied -- You are booking on %s, but you just booked from last %s months(s)",
+          data.getEventDate(), numberOfMonthsUntilNextBooking));
+    }
+  }
+
   /**
    * If a delete method will be created, consider the ff:
    * - Deleting a reservation should also reset the room involved to available in availability_calendar table
    * - Deleting or updating a room availability in availability_calendar table should not be allowed
    */
-  private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String respCode, String msg) {
+  private CommonResponse getResponse(Object data, int status, String respCode, String msg) {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     String dateTokenCreated = formatter.format(dateTime);
 
-    return JwtAuthenticationResponse.builder()
+    return CommonResponse.builder()
         .timestamp(dateTokenCreated)
-        .data(data)
+        .info(data)
         .status(status)
-        .responsecode(respCode)
+        .responseCode(respCode)
         .message(msg)
         .build();
   }

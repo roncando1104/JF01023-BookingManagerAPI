@@ -8,6 +8,7 @@
 package com.jfcm.manda.bookingmanagerapi.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
 import com.jfcm.manda.bookingmanagerapi.dao.request.SignUpRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.request.SigninRequest;
@@ -21,12 +22,17 @@ import com.jfcm.manda.bookingmanagerapi.service.AuthenticationService;
 import com.jfcm.manda.bookingmanagerapi.service.DataValidationService;
 import com.jfcm.manda.bookingmanagerapi.service.JwtService;
 import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -74,17 +80,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         .simbahayCode(request.getSimbahayCode())
         .userName(request.getUserName())
         .password(passwordEncoder.encode(request.getPassword()))
+        //TODO: Add column in data base which will hold the encrypted password
         .build();
 
     usersRepository.save(user);
     var jwt = jwtService.generateToken(user);
+    var refreshToken = jwtService.generateRefreshToken(user);
     var tokenExpiry = jwtService.extractExpiration(jwt);
 
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(),
         String.format("You have been added as new user with %s role and id %s", user.getRole(), user.getId()),
         Constants.TRANSACTION_SUCCESS);
 
-    return getAuthenticationResponse(tokenExpiry, jwt, user, String.format("You have been added as new user with role %s and id %s", user.getRole(), user.getId()));
+    return getAuthenticationResponse(tokenExpiry, jwt, refreshToken, user, String.format("You have been added as new user with role %s and id %s", user.getRole(), user.getId()));
   }
 
   @Override
@@ -94,13 +102,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword()));
 
     var jwt = jwtService.generateToken(user);
+    var refreshToken = jwtService.generateRefreshToken(user);
     var tokenExpiry = jwtService.extractExpiration(jwt);
 
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(),
         String.format("User %s %s has successfully login.", user.getFirstName(), user.getLastName()),
         Constants.TRANSACTION_SUCCESS);
 
-    return getAuthenticationResponse(tokenExpiry, jwt, user, String.format("User %s %s has successfully login.", user.getFirstName(), user.getLastName()));
+    return getAuthenticationResponse(tokenExpiry, jwt, refreshToken, user, String.format("User %s %s has successfully login.", user.getFirstName(), user.getLastName()));
   }
 
   @Override
@@ -113,16 +122,45 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         .orElseThrow(() -> new RecordNotFoundException(String.format("User with id %s doesn't exist", id)));
     //update password with the new password
     usersRepository.updatePassword(passwordEncoder.encode(data.getNewPassword()), id);
+    //TODO: Add column in data base which will hold the encrypted password
     var jwt = jwtService.generateToken(user);
+    var refreshToken = jwtService.generateRefreshToken(user);
     var tokenExpiry = jwtService.extractExpiration(jwt);
 
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User with id %s has successfully updated password", user.getId()),
         Constants.TRANSACTION_SUCCESS);
 
-    return getAuthenticationResponse(tokenExpiry, jwt, user, String.format("User with id %s has successfully updated password", user.getId()));
+    return getAuthenticationResponse(tokenExpiry, jwt, refreshToken, user, String.format("User with id %s has successfully updated password", user.getId()));
   }
 
-  private JwtAuthenticationResponse getAuthenticationResponse(Date tokenExpiry, String jwt, Object user, String msg) {
+  public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+    final String refreshToken;
+    final String userName;
+
+    if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, Constants.PREFIX_TOKEN_BEARER)) {
+      return;
+    }
+
+    refreshToken = authHeader.split(" ")[1].trim();
+    userName = jwtService.extractUserName(refreshToken);
+
+    if (StringUtils.isNotEmpty(userName)) {
+      var userDetails = this.usersRepository.findByUserName(userName).orElseThrow();
+
+      if (jwtService.isTokenValid(refreshToken, userDetails)) {
+       var accessToken = jwtService.generateToken(userDetails);
+       var authResponse = JwtAuthenticationResponse.builder()
+           .accessToken(accessToken)
+           .refreshToken(refreshToken)
+           .build();
+
+       new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+      }
+    }
+  }
+
+  private JwtAuthenticationResponse getAuthenticationResponse(Date tokenExpiry, String accessToken, String refreshToken, Object user, String msg) {
 
     LocalDateTime tokenExpiryStr = LocalDateTime.ofInstant(tokenExpiry.toInstant(), ZoneId.systemDefault());
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -131,11 +169,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     return JwtAuthenticationResponse.builder()
         .timestamp(dateTokenCreated)
-        .token(jwt)
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
         .expiration(tokenExpiryDate)
-        .data(user)
+        .info(user)
         .status(HttpStatus.OK.value())
-        .responsecode(Constants.TRANSACTION_SUCCESS)
+        .responseCode(Constants.TRANSACTION_SUCCESS)
         .message(msg)
         .build();
   }

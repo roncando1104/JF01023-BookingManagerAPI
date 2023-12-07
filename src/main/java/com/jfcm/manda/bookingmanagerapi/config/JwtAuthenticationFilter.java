@@ -18,6 +18,7 @@ import java.io.IOException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(@NonNull HttpServletRequest request,
       @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-    final String authHeader = request.getHeader(Constants.HEADER_AUTHORIZATION);
+    final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
     final String jwt;
     final String userName;
 

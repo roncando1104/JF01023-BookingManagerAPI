@@ -13,10 +13,15 @@ import com.jfcm.manda.bookingmanagerapi.dao.request.SigninRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
 import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
 import com.jfcm.manda.bookingmanagerapi.service.AuthenticationService;
+import com.jfcm.manda.bookingmanagerapi.service.JwtService;
 import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,7 +69,7 @@ public class UserAuthenticationResources {
    * @throws com.jfcm.manda.bookingmanagerapi.exception.DataAlreadyExistException if user exist.
    * @implNote User is queried using first name, last name, and birthday. Check authentication.signup() call (line 59).
    */
-  @PostMapping("/signup")
+  @PostMapping(value = "/signup", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<JwtAuthenticationResponse> signup(@RequestBody String request) throws JsonProcessingException {
     String processedRequest = Utilities.checkAndFixInvalidJson(request);
     SignUpRequest data = utilities.readfromInput(processedRequest, SignUpRequest.class);
@@ -93,11 +98,18 @@ public class UserAuthenticationResources {
    * @throws JsonProcessingException if an error during JSON processing occurs
    * @throws InvalidInputException if user or password is invalid
    */
-  @PostMapping("/signin")
+  @PostMapping(value = "/signin", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody String request) throws JsonProcessingException {
     String processedRequest = Utilities.checkAndFixInvalidJson(request);
     SigninRequest signinData = utilities.readfromInput(processedRequest, SigninRequest.class);
     return ResponseEntity.ok(authenticationService.signin(signinData));
+  }
+
+  // request - we get the authorization header that holds the refresh-token
+  // response - will help us to re-inject or send back the response to the user
+  @PostMapping(value = "/refresh-token", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    authenticationService.refreshToken(request, response);
   }
 
   /**
@@ -117,7 +129,7 @@ public class UserAuthenticationResources {
    * @throws com.jfcm.manda.bookingmanagerapi.exception.RecordNotFoundException is user doesn't exist
    * @implNote User is queried using first name, last name, and birthday. Check authentication.signup() call (line 59).
    */
-  @PutMapping("/update-password/{id}")
+  @PutMapping(value = "/update-password/{id}", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<JwtAuthenticationResponse> updatePassword(@RequestBody String request, @PathVariable String id) throws JsonProcessingException {
     String processedRequest = Utilities.checkAndFixInvalidJson(request);
     return ResponseEntity.ok(authenticationService.updatePassword(processedRequest, id));

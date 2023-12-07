@@ -1,4 +1,14 @@
 spring:
+#  cloud:
+#    gateway:
+#      default-filters:
+#        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+#      globalcors:
+#        corsConfigurations:
+#          '[/**]':
+#            allowedOrigins: "http://localhost:3000"
+#            allowedHeaders: "*"
+#            allowedMethods: "*"
   jackson:
     serialization:
       indent-output: true
@@ -50,6 +60,7 @@ booking:
     number-of-weeks: 0
     number-of-months: 0
     event-days: SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY
-    filter-flag: false #allow if true
+    filter-flag:
+      enabled: true #allow if true
 server:
   port: 8080

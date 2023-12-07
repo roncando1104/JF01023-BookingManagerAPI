@@ -19,10 +19,11 @@ import lombok.NoArgsConstructor;
 public class JwtAuthenticationResponse {
 
   private String timestamp;
-  private String token;
+  private String accessToken;
+  private String refreshToken;
   private String expiration;
-  private Object data;
+  private Object info;
   private int status;
-  private String responsecode;
+  private String responseCode;
   private String message;
 }

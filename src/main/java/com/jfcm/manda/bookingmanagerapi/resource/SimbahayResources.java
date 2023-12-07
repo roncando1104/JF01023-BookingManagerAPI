@@ -9,7 +9,7 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
-import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
+import com.jfcm.manda.bookingmanagerapi.dao.response.CommonResponse;
 import com.jfcm.manda.bookingmanagerapi.exception.RecordNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.model.SimbahayGroupsEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.SimbahayRepository;
@@ -54,12 +54,12 @@ public class SimbahayResources {
    * @throws JsonProcessingException if an error during JSON processing occurs
    */
   @GetMapping(value = "/simbahay", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<JwtAuthenticationResponse> getAllSimbahays() throws JsonProcessingException {
+  public ResponseEntity<CommonResponse> getAllSimbahays() throws JsonProcessingException {
     List<SimbahayGroupsEntity> data = simbahayRepository.findAll();
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Simbahay groups retrieved successfully. %s record(s)", data.size()),
         Constants.TRANSACTION_SUCCESS);
 
-    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+    var response = getResponse(data, HttpStatus.OK.value(),
         Constants.TRANSACTION_SUCCESS, String.format("Simbahay groups retrieved successfully. %s record(s)", data.size()));
 
     return ResponseEntity.ok(response);
@@ -82,7 +82,7 @@ public class SimbahayResources {
       throw new RecordNotFoundException(String.format("Simbahay with id %s doesn't exist.", id));
     }
 
-    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+    var response = getResponse(data, HttpStatus.OK.value(),
         Constants.TRANSACTION_SUCCESS, String.format("Simbahay with id %s was successfully retrieved.", id));
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Simbahay with id %s was successfully retrieved.", id),
         Constants.TRANSACTION_SUCCESS);
@@ -118,7 +118,7 @@ public class SimbahayResources {
 
     simbahayRepository.save(data);
 
-    var response = getJwtAuthenticationResponse(data, HttpStatus.CREATED.value(),
+    var response = getResponse(data, HttpStatus.CREATED.value(),
         Constants.TRANSACTION_SUCCESS, String.format("New simbahay group with id %s successfully created!", data.getId()));
     return ResponseEntity.ok(response);
   }
@@ -141,7 +141,7 @@ public class SimbahayResources {
     }
     simbahayRepository.deleteById(id);
 
-    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+    var response = getResponse(data, HttpStatus.OK.value(),
         Constants.TRANSACTION_SUCCESS, String.format("Simbahay with id %s has been deleted", id));
     return ResponseEntity.ok(response);
   }
@@ -183,21 +183,21 @@ public class SimbahayResources {
     simbahayGrp.setId(id);
     var updatedData = simbahayRepository.save(simbahayGrp);
 
-    var response = getJwtAuthenticationResponse(updatedData, HttpStatus.OK.value(),
+    var response = getResponse(updatedData, HttpStatus.OK.value(),
         Constants.TRANSACTION_SUCCESS, String.format("Simbahay with id %s has been updated", id));
     return ResponseEntity.ok(response);
   }
 
-  private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String respCode, String msg) {
+  private CommonResponse getResponse(Object data, int status, String respCode, String msg) {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     String dateTokenCreated = formatter.format(dateTime);
 
-    return JwtAuthenticationResponse.builder()
+    return CommonResponse.builder()
         .timestamp(dateTokenCreated)
-        .data(data)
+        .info(data)
         .status(status)
-        .responsecode(respCode)
+        .responseCode(respCode)
         .message(msg)
         .build();
   }

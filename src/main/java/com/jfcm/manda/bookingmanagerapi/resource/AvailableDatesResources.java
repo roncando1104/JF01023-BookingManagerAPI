@@ -9,11 +9,10 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
-import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
+import com.jfcm.manda.bookingmanagerapi.dao.response.CommonResponse;
 import com.jfcm.manda.bookingmanagerapi.model.AvailabilityCalendarEntity;
 import com.jfcm.manda.bookingmanagerapi.model.RoomStatusEnum;
 import com.jfcm.manda.bookingmanagerapi.repository.AvailableDateRepository;
-import com.jfcm.manda.bookingmanagerapi.repository.AvailableRoomOnDateRepository;
 import com.jfcm.manda.bookingmanagerapi.service.impl.GenerateUUIDService;
 import com.jfcm.manda.bookingmanagerapi.service.impl.LoggingService;
 import java.time.LocalDateTime;
@@ -54,7 +53,7 @@ public class AvailableDatesResources {
 
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Cluster groups retrieved successfully. %s record(s)", data.size()),
         Constants.TRANSACTION_SUCCESS);
-    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+    var response = getResponse(data, HttpStatus.OK.value(),
         String.format("All %s day(s) has been retrieved", data.size()));
     return ResponseEntity.ok(response);
   }
@@ -67,7 +66,7 @@ public class AvailableDatesResources {
     // Use this logic below in ReservationResources class before saving the reservation
     //String result = availableRoomOnDateRepository.checkIfRoomIsAvailableOnAGivenDate("room1", "available", "2023-11-04");
 
-    var response = getJwtAuthenticationResponse(availableRooms, HttpStatus.OK.value(),
+    var response = getResponse(availableRooms, HttpStatus.OK.value(),
         String.format("Check the availability: Room-1 is %s | Room-2 is %s | Sow Room-1 is %s | Sow Room-2 is %s",
             availableRooms.stream().findAny().map(AvailabilityCalendarEntity::getRoom1).orElse(RoomStatusEnum.not_define),
             availableRooms.stream().findAny().map(AvailabilityCalendarEntity::getRoom2).orElse(RoomStatusEnum.not_define),
@@ -76,16 +75,16 @@ public class AvailableDatesResources {
     return ResponseEntity.ok(response);
   }
 
-  private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String msg) {
+  private CommonResponse getResponse(Object data, int status, String msg) {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     String dateTokenCreated = formatter.format(dateTime);
 
-    return JwtAuthenticationResponse.builder()
+    return CommonResponse.builder()
         .timestamp(dateTokenCreated)
-        .data(data)
+        .info(data)
         .status(status)
-        .responsecode(Constants.TRANSACTION_SUCCESS)
+        .responseCode(Constants.TRANSACTION_SUCCESS)
         .message(msg)
         .build();
   }

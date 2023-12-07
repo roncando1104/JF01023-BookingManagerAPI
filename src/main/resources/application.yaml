@@ -1,4 +1,14 @@
 spring:
+#  cloud:
+#    gateway:
+#      default-filters:
+#        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+#      globalcors:
+#        corsConfigurations:
+#          '[/**]':
+#            allowedOrigins: "http://localhost:3000"
+#            allowedHeaders: "*"
+#            allowedMethods: "*"
   security:
     filter:
       order: 10
@@ -47,14 +57,19 @@ springdoc:
     operationSorter: method
   api-docs:
     path: /api-docs
-token:
-  session:
-    expiration: 10800000 #expires in 3 hours (1000 * 180 * 60)
+application:
+  security:
+    jwt:
+      secret-key: q+QgId0EKAQ53YG3dNelFqlqTteekylCqjRDj3tb71E=
+      expiration: 10800000 #expires in 3 hours (1000 * 180 * 60) / 1 day is 86400000
+      refresh-token:
+        expiration: 32400000 #expires in 9 hours
 booking:
   allowable:
     number-of-weeks: 2
     number-of-months: 2
     event-days: SUNDAY,SATURDAY,FRIDAY,TUESDAY,THURSDAY
-    filter-flag: true #allow if true
+    filter-flag:
+      enabled: true #allow if true
 server:
   port: 8080

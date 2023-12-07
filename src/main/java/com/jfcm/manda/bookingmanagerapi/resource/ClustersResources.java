@@ -9,7 +9,7 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
-import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
+import com.jfcm.manda.bookingmanagerapi.dao.response.CommonResponse;
 import com.jfcm.manda.bookingmanagerapi.exception.RecordNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.model.ClusterGroupsEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.ClustersRepository;
@@ -22,7 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +60,7 @@ public class ClustersResources {
 
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Cluster groups retrieved successfully. %s record(s)", data.size()),
         Constants.TRANSACTION_SUCCESS);
-    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+    var response = getResponse(data, HttpStatus.OK.value(),
         String.format("Cluster groups retrieved successfully. %s record(s)", data.size()));
     return ResponseEntity.ok(response);
   }
@@ -82,7 +81,7 @@ public class ClustersResources {
       LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Cluster group with id %s successfully retrieved", id),
           Constants.TRANSACTION_SUCCESS);
 
-      var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+      var response = getResponse(data, HttpStatus.OK.value(),
           String.format("Cluster group with id %s successfully retrieved", id));
       return ResponseEntity.ok(response);
     } else {
@@ -118,7 +117,7 @@ public class ClustersResources {
         String.format("New cluster group with id %s successfully created!", data.getClusterCode()),
         Constants.TRANSACTION_SUCCESS);
 
-    var response = getJwtAuthenticationResponse(data, HttpStatus.CREATED.value(),
+    var response = getResponse(data, HttpStatus.CREATED.value(),
         String.format("New cluster group with id %s successfully created!", data.getClusterCode()));
     return ResponseEntity.ok(response);
   }
@@ -144,7 +143,7 @@ public class ClustersResources {
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Cluster group with id %s has been deleted", id),
         Constants.TRANSACTION_SUCCESS);
 
-    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+    var response = getResponse(data, HttpStatus.OK.value(),
         String.format("Cluster group with id %s has been deleted", id));
     return ResponseEntity.ok(response);
   }
@@ -183,21 +182,21 @@ public class ClustersResources {
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Cluster group with id %s has been updated", id),
         Constants.TRANSACTION_SUCCESS);
 
-    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+    var response = getResponse(data, HttpStatus.OK.value(),
         String.format("Cluster group with id %s has been updated", id));
     return ResponseEntity.ok(response);
   }
 
-  private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String msg) {
+  private CommonResponse getResponse(Object data, int status, String msg) {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     String dateTokenCreated = formatter.format(dateTime);
 
-    return JwtAuthenticationResponse.builder()
+    return CommonResponse.builder()
         .timestamp(dateTokenCreated)
-        .data(data)
+        .info(data)
         .status(status)
-        .responsecode(Constants.TRANSACTION_SUCCESS)
+        .responseCode(Constants.TRANSACTION_SUCCESS)
         .message(msg)
         .build();
   }

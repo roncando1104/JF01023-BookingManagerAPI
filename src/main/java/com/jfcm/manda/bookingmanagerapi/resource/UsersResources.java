@@ -9,7 +9,7 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.constants.Constants;
-import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
+import com.jfcm.manda.bookingmanagerapi.dao.response.CommonResponse;
 import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
 import com.jfcm.manda.bookingmanagerapi.exception.RecordNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.model.UsersEntity;
@@ -39,7 +39,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/booking-api/v1/records")
+//@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+@RequestMapping(value = "/booking-api/v1/records")
 public class UsersResources {
 
   private final LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("Asia/Manila"));
@@ -59,13 +60,13 @@ public class UsersResources {
    * @return ResponseEntity OK
    * @throws JsonProcessingException if an error during JSON processing occurs
    */
-  @GetMapping(value = "/users", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<JwtAuthenticationResponse> getAllUsers() throws JsonProcessingException {
+  @GetMapping(value = "/users", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<CommonResponse> getAllUsers() throws JsonProcessingException {
     List<UsersEntity> data = usersRepository.findAll();
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Data retrieved successfully. %s record(s)", data.size()),
         Constants.TRANSACTION_SUCCESS);
 
-    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+    var response = getResponse(data, HttpStatus.OK.value(),
         Constants.TRANSACTION_SUCCESS, String.format("Data retrieved successfully. %s record(s)", data.size()));
 
     return ResponseEntity.ok(response);
@@ -78,8 +79,8 @@ public class UsersResources {
    * @throws JsonProcessingException if an error during JSON processing occurs
    * @throws RecordNotFoundException if user doesn't exist
    */
-  @GetMapping(value = "/user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<JwtAuthenticationResponse> getUserById(@PathVariable(value = "id") String id) throws JsonProcessingException {
+  @GetMapping(value = "/user/{id}", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<CommonResponse> getUserById(@PathVariable(value = "id") String id) throws JsonProcessingException {
     Optional<UsersEntity> data = usersRepository.findById(id);
 
     if (data.isEmpty()) {
@@ -88,7 +89,7 @@ public class UsersResources {
       throw new RecordNotFoundException(String.format("User with id %s doesn't exist.", id));
     }
 
-    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+    var response = getResponse(data, HttpStatus.OK.value(),
         Constants.TRANSACTION_SUCCESS, String.format("User with id %s was successfully retrieved.", id));
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User with id %s was successfully retrieved.", id),
         Constants.TRANSACTION_SUCCESS);
@@ -125,8 +126,8 @@ public class UsersResources {
    * @throws com.jfcm.manda.bookingmanagerapi.exception.DataAlreadyExistException if user exist.
    * @implNote User is queried using first name, last name, and birthday (line 133)
    */
-  @PostMapping(value = "/add-user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<JwtAuthenticationResponse> addUser(@RequestBody String input) throws IOException {
+  @PostMapping(value = "/add-user", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<CommonResponse> addUser(@RequestBody String input) throws IOException {
     String processedInput = Utilities.checkAndFixInvalidJson(input);
     UsersEntity data = utilities.readfromInput(processedInput, UsersEntity.class);
     //validate if user already exists
@@ -140,7 +141,7 @@ public class UsersResources {
     }
 
     var newUser = usersRepository.save(data);
-    var response = getJwtAuthenticationResponse(data, HttpStatus.CREATED.value(),
+    var response = getResponse(data, HttpStatus.CREATED.value(),
         Constants.TRANSACTION_SUCCESS, String.format("New user with id %s successfully created!", newUser.getId()));
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("New user with id %s successfully created!", newUser.getId()),
         Constants.TRANSACTION_SUCCESS);
@@ -155,8 +156,8 @@ public class UsersResources {
    * @throws JsonProcessingException if an error during JSON processing occurs
    * @throws RecordNotFoundException if user doesn't exist
    */
-  @DeleteMapping(value = "/delete-user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<JwtAuthenticationResponse> deleteMember(@PathVariable(value = "id") String id) throws JsonProcessingException {
+  @DeleteMapping(value = "/delete-user/{id}", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<CommonResponse> deleteMember(@PathVariable(value = "id") String id) throws JsonProcessingException {
     var data = usersRepository.findById(id);
 
     if (data.isEmpty()) {
@@ -166,7 +167,7 @@ public class UsersResources {
     }
 
     usersRepository.deleteById(id);
-    var response = getJwtAuthenticationResponse(data, HttpStatus.OK.value(),
+    var response = getResponse(data, HttpStatus.OK.value(),
         Constants.TRANSACTION_SUCCESS, String.format("User with id %s was deleted", id));
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User with id %s was deleted", id),
         Constants.TRANSACTION_SUCCESS);
@@ -202,8 +203,8 @@ public class UsersResources {
    * @throws JsonProcessingException if an error during JSON processing occurs
    * @throws RecordNotFoundException if user doesn't exist
    */
-  @PutMapping(value = "/update-user/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<JwtAuthenticationResponse> updateUserById(@RequestBody String input, @PathVariable String id) throws JsonProcessingException {
+  @PutMapping(value = "/update-user/{id}", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<CommonResponse> updateUserById(@RequestBody String input, @PathVariable String id) throws JsonProcessingException {
     String processedInput = Utilities.checkAndFixInvalidJson(input);
     UsersEntity user = utilities.readfromInput(processedInput, UsersEntity.class);
     Optional<UsersEntity> userById = usersRepository.findById(id);
@@ -216,7 +217,7 @@ public class UsersResources {
 
     user.setId(id);
     usersRepository.save(user);
-    var response = getJwtAuthenticationResponse(user, HttpStatus.OK.value(),
+    var response = getResponse(user, HttpStatus.OK.value(),
         Constants.TRANSACTION_SUCCESS, String.format("User with id %s has been updated", id));
     LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User with id %s has been updated", id),
         Constants.TRANSACTION_SUCCESS);
@@ -224,16 +225,16 @@ public class UsersResources {
     return ResponseEntity.ok(response);
   }
 
-  private JwtAuthenticationResponse getJwtAuthenticationResponse(Object data, int status, String respCode, String msg) {
+  private CommonResponse getResponse(Object data, int status, String respCode, String msg) {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     String dateTokenCreated = formatter.format(dateTime);
 
-    return JwtAuthenticationResponse.builder()
+    return CommonResponse.builder()
         .timestamp(dateTokenCreated)
-        .data(data)
+        .info(data)
         .status(status)
-        .responsecode(respCode)
+        .responseCode(respCode)
         .message(msg)
         .build();
   }

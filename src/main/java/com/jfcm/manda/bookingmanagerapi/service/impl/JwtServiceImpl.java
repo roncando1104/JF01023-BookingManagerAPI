@@ -30,9 +30,15 @@ public class JwtServiceImpl implements JwtService {
 
   private final LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("Asia/Manila"));
 
-  @Value("#{new Long('${token.session.expiration}')}")
-  //@Value("${token.session.expiration}")
-  private long tokenExpiration;
+  @Value("#{new Long('${application.security.jwt.expiration}')}")
+  //@Value("${application.security.jwt.expiration}")
+  private long accessTokenExpiration;
+
+  @Value(("${application.security.jwt.secret-key}"))
+  private String secretKey;
+
+  @Value("#{new Long('${application.security.jwt.refresh-token.expiration}')}")
+  private long refreshTokenExpiration;
 
   @Override
   public String extractUserName(String token) {
@@ -55,11 +61,22 @@ public class JwtServiceImpl implements JwtService {
     return claimsResolvers.apply(claims);
   }
 
-  private String generateToken(Map<String, Object> extractClaims, UserDetails userDetails) {
-    return Jwts.builder().setClaims(extractClaims).setSubject(userDetails.getUsername())
+  private String buildToken(Map<String, Object> extractClaims, UserDetails userDetails, long expiration) {
+    return Jwts.builder()
+        .setClaims(extractClaims)
+        .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + tokenExpiration))
-        .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
+        .setExpiration(new Date(System.currentTimeMillis() + expiration))
+        .signWith(getSigningKey(), SignatureAlgorithm.HS256).
+        compact();
+  }
+
+  private String generateToken(Map<String, Object> extractClaims, UserDetails userDetails) {
+    return buildToken(extractClaims, userDetails, accessTokenExpiration);
+  }
+
+  public String generateRefreshToken(UserDetails userDetails) {
+    return buildToken(new HashMap<>(), userDetails, refreshTokenExpiration);
   }
 
   private boolean isTokenExpired(String token) {
@@ -77,7 +94,7 @@ public class JwtServiceImpl implements JwtService {
   }
 
   private Key getSigningKey() {
-    byte[] keyBytes = Decoders.BASE64.decode(Constants.JWT_SIGNING_KEY);
+    byte[] keyBytes = Decoders.BASE64.decode(secretKey);
     return Keys.hmacShaKeyFor(keyBytes);
   }
 }
