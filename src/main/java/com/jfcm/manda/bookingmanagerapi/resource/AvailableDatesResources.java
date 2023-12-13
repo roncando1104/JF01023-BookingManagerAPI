@@ -47,18 +47,18 @@ public class AvailableDatesResources {
    * {@link com.jfcm.manda.bookingmanagerapi.service.impl.AvailabilityCalendarServiceImpl}
    */
 
-  @GetMapping(value = "/all-dates", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/all-dates", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getAllDates() throws JsonProcessingException {
     List<AvailabilityCalendarEntity> data = availableDateRepository.findAll();
 
-    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Cluster groups retrieved successfully. %s record(s)", data.size()),
+    LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Availability dates retrieved successfully. %s record(s)", data.size()),
         Constants.TRANSACTION_SUCCESS);
     var response = getResponse(data, HttpStatus.OK.value(),
         String.format("All %s day(s) has been retrieved", data.size()));
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping(value = "/available-room/{date}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/available-room/{date}", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> getAvailableRoomsOnAGivenDate(@PathVariable(value = "date") String date) {
     List<AvailabilityCalendarEntity> availableRooms = availableDateRepository.checkRoomsAvailableOnAGivenDate(date);
     //NOTE:

@@ -13,6 +13,7 @@ import com.jfcm.manda.bookingmanagerapi.dao.response.CommonResponse;
 import com.jfcm.manda.bookingmanagerapi.exception.GenericBookingException;
 import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
 import com.jfcm.manda.bookingmanagerapi.exception.MultipleBookingException;
+import com.jfcm.manda.bookingmanagerapi.exception.RecordNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationEntity;
 import com.jfcm.manda.bookingmanagerapi.model.RoomStatusEnum;
 import com.jfcm.manda.bookingmanagerapi.repository.AvailableRoomOnDateRepository;
@@ -26,9 +27,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +39,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,6 +73,25 @@ public class ReservationResources {
   //@Value("${booking.allowable.filter-flag.enabled}")
   //private boolean isFilterAllowed;
 
+  @GetMapping(value = "/event-info/{date}", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<CommonResponse> getReservationById(@PathVariable(value = "date") String date) throws JsonProcessingException {
+
+    List<ReservationEntity> eventInfo = reservationRepository.findByEventDate(date);
+
+    if(ObjectUtils.isNotEmpty(eventInfo)) {
+      LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Reservation on date %s successfully retrieved", date),
+          Constants.TRANSACTION_SUCCESS);
+
+      var response = getResponse(eventInfo, HttpStatus.OK.value(), Constants.TRANSACTION_SUCCESS,
+          String.format("Reservation on date %s successfully retrieved", date));
+      return ResponseEntity.ok(response);
+    } else {
+      LOG.error(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("Reservation on date %s doesn't exist", date),
+          Constants.TRANSACTION_FAILED);
+      throw new RecordNotFoundException(String.format("Reservation on date %s doesn't exist", date));
+    }
+  }
+
   /**
    * @request
    * This method accepts below payload
@@ -91,7 +115,7 @@ public class ReservationResources {
    * @throws JsonProcessingException if an error during JSON processing occurs
    */
 
-  @PostMapping(value = "/add-reservation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/add-reservation", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> addReservation(@RequestBody String input) throws JsonProcessingException {
     ReservationEntity data = createReservationData.getReservationData(input);
     //This implementation was changed.  Checked if it still works properly.  Removed if ok.

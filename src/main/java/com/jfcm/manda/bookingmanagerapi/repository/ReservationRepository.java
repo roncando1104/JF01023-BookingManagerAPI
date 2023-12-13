@@ -7,7 +7,6 @@
  */
 package com.jfcm.manda.bookingmanagerapi.repository;
 
-import com.jfcm.manda.bookingmanagerapi.model.BookedEventsEntity;
 import com.jfcm.manda.bookingmanagerapi.model.ReservationEntity;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +19,10 @@ import org.springframework.stereotype.Repository;
 public interface ReservationRepository extends JpaRepository<ReservationEntity, String> {
 
   Optional<ReservationEntity> findById(String id);
+
+  @Query(nativeQuery = true,
+      value = "SELECT * FROM reservation WHERE event_date LIKE '%'||:date||'%'")
+  List<ReservationEntity> findByEventDate(@Param("date") String date);
 
   List<ReservationEntity> findAll();
 
