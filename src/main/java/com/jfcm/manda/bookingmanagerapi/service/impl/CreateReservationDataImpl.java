@@ -13,6 +13,10 @@ import com.jfcm.manda.bookingmanagerapi.model.ReservationStatusEnum;
 import com.jfcm.manda.bookingmanagerapi.service.CreateReservationData;
 import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +40,15 @@ public class CreateReservationDataImpl implements CreateReservationData {
     data.setBookingDate(Utilities.formatDate(LocalDate.now()));
 
     data.setClientId(clientId);
-    String totalFee = data.isWithFee() ? Utilities.formatNumber(1500) : Utilities.formatNumber(0);
+    var activity = data.getActivity();
+    List<String> listOfActivityWithNoFee = Arrays.asList("Fellowship", "Elders Meeting", "Ministry Meeting", "Cluster Meeting");
+    boolean matchedActivityWithNoFee = listOfActivityWithNoFee.stream().anyMatch(list -> list.equalsIgnoreCase(activity));
+    if (matchedActivityWithNoFee) {
+      data.setWithFee(false);
+    } else {
+      data.setWithFee(true);
+    }
+    String totalFee = data.isWithFee() ? Utilities.formatNumber(1500) : "NO FEE";
     data.setTotalFee(totalFee);
 
     data.setStatus(ReservationStatusEnum.FOR_APPROVAL);

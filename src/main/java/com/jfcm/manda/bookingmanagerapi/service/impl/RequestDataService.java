@@ -7,6 +7,7 @@
  */
 package com.jfcm.manda.bookingmanagerapi.service.impl;
 
+import com.jfcm.manda.bookingmanagerapi.exception.RecordNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.model.BookedEventsEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.BookedEventsRepository;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
@@ -14,7 +15,9 @@ import com.jfcm.manda.bookingmanagerapi.utils.Utilities;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,8 +38,13 @@ public class RequestDataService {
   public String getClientIdByName(String fullName) {
     String fName = utilities.splitFullName(fullName, "firstName");
     String lName = utilities.splitFullName(fullName, "lastName");
+    var clientName = usersRepository.findUserIdByFullName(fName, lName);
 
-    return usersRepository.findUserIdByFullName(fName, lName);
+    if (StringUtils.isEmpty(clientName)) {
+      throw new RecordNotFoundException(String.format("No Record Found for name %s %s", fName, lName));
+    } else {
+      return clientName;
+    }
   }
 
   public List<BookedEventsEntity> getBookedEventDateByClientId(String clientId, String groupCode) {

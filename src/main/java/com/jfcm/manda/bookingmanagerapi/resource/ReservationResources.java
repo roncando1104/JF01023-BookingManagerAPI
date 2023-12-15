@@ -191,8 +191,8 @@ public class ReservationResources {
         data.getEventDate(), data.getGroupCode());
 
     if (Boolean.FALSE.equals(isLastBookingMadeAfterNumberOfMonths)) {
-      throw new GenericBookingException(String.format("Denied -- You are booking on %s, but you just booked from last %s months(s)",
-          data.getEventDate(), numberOfMonthsUntilNextBooking));
+      throw new GenericBookingException(String.format("Denied -- You are booking on %s, but you just booked last %s months on %s",
+          data.getEventDate(), numberOfMonthsUntilNextBooking, data.getBookingDate()));
     }
   }
 
