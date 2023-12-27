@@ -64,6 +64,11 @@ application:
       expiration: 10800000 #expires in 3 hours (1000 * 180 * 60) / 1 day is 86400000
       refresh-token:
         expiration: 32400000 #expires in 9 hours
+logging:
+  level:
+    org:
+      springframework:
+        web: ERROR
 booking:
   allowable:
     number-of-weeks: 2

@@ -10,6 +10,7 @@ package com.jfcm.manda.bookingmanagerapi.resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jfcm.manda.bookingmanagerapi.dao.request.SignUpRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.request.SigninRequest;
+import com.jfcm.manda.bookingmanagerapi.dao.request.TokenRequest;
 import com.jfcm.manda.bookingmanagerapi.dao.response.JwtAuthenticationResponse;
 import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
 import com.jfcm.manda.bookingmanagerapi.service.AuthenticationService;
@@ -110,6 +111,12 @@ public class UserAuthenticationResources {
   @PostMapping(value = "/refresh-token", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
     authenticationService.refreshToken(request, response);
+  }
+
+  @PostMapping(value = "/check-token", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public void isTokenStillValid(@RequestBody String token, HttpServletResponse response) throws IOException {
+    TokenRequest tokenData = utilities.readfromInput(token, TokenRequest.class);
+    authenticationService.isTokenExpired(tokenData.getToken(), response);
   }
 
   /**

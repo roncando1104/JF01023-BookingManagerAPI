@@ -20,8 +20,9 @@ public class JwtAuthenticationResponse {
 
   private String timestamp;
   private String accessToken;
+  private String accessTokenExpiration;
   private String refreshToken;
-  private String expiration;
+  private String refreshTokenExpiration;
   private Object info;
   private int status;
   private String responseCode;

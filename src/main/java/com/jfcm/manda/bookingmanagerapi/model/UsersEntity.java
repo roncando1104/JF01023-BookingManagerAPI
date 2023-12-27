@@ -17,6 +17,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -112,9 +113,16 @@ public class UsersEntity implements UserDetails {
   @NonNull
   @Column(name = "user_name")
   private String userName;
+  private String password;
   @JsonProperty(required = true)
   @NonNull
-  private String password;
+  @Column(name = "plain_password")
+  private String plainPassword;
+  //TODO: Consider adding this as new column
+  @JsonProperty(required = true)
+  @NonNull
+  @Transient
+  private String newPassword;
 
   @JsonDeserialize(using = CustomAuthorityDeserializerUtil.class)
   @Override

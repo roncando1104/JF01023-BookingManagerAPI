@@ -14,6 +14,8 @@ public class Constants {
   public static final String TRANSACTION_SUCCESS = "TRN-000";
   public static final String TRANSACTION_FAILED = "TRN-001";
   public static final String PREFIX_TOKEN_BEARER = "Bearer ";
+  public static final String INVALID_PASSWORD_OR_USERNAME = "Incorrect password or username";
+  public static final String USERNAME_OR_PASSWORD_IS_INCORRECT = "Username %s or Password %s is incorrect";
 
   public static final String[] AUTH_WHITE_LIST = {
       //Private Endpoints

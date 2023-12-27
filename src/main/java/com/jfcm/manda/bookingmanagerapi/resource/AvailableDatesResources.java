@@ -13,6 +13,7 @@ import com.jfcm.manda.bookingmanagerapi.dao.response.CommonResponse;
 import com.jfcm.manda.bookingmanagerapi.model.AvailabilityCalendarEntity;
 import com.jfcm.manda.bookingmanagerapi.model.RoomStatusEnum;
 import com.jfcm.manda.bookingmanagerapi.repository.AvailableDateRepository;
+import com.jfcm.manda.bookingmanagerapi.service.JwtService;
 import com.jfcm.manda.bookingmanagerapi.service.impl.GenerateUUIDService;
 import com.jfcm.manda.bookingmanagerapi.service.impl.LoggingService;
 import java.time.LocalDateTime;
@@ -39,6 +40,8 @@ public class AvailableDatesResources {
   private LoggingService LOG;
   @Autowired
   private GenerateUUIDService generateUUIDService;
+  @Autowired
+  private JwtService jwtService;
 
   /**
    * @implNote This resource will only retrieve dates from availability_calendar.

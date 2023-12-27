@@ -14,6 +14,7 @@ import com.jfcm.manda.bookingmanagerapi.exception.InvalidInputException;
 import com.jfcm.manda.bookingmanagerapi.exception.RecordNotFoundException;
 import com.jfcm.manda.bookingmanagerapi.model.UsersEntity;
 import com.jfcm.manda.bookingmanagerapi.repository.UsersRepository;
+import com.jfcm.manda.bookingmanagerapi.service.AuthenticationService;
 import com.jfcm.manda.bookingmanagerapi.service.DataValidationService;
 import com.jfcm.manda.bookingmanagerapi.service.impl.GenerateUUIDService;
 import com.jfcm.manda.bookingmanagerapi.service.impl.LoggingService;
@@ -29,6 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsersResources {
 
   private final LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("Asia/Manila"));
+
   @Autowired
   private UsersRepository usersRepository;
   @Autowired
@@ -54,6 +58,8 @@ public class UsersResources {
   private LoggingService LOG;
   @Autowired
   private GenerateUUIDService generateUUIDService;
+  @Autowired
+  private AuthenticationService authenticationService;
 
   /**
    * @implNote this method retrieves all the users from database
@@ -193,7 +199,8 @@ public class UsersResources {
   "simbahayName": "",
   "simbahayCode": "",
   "userName": "",
-  "password": ""
+  "password": "",
+  "newPassword": ""
   }
    * @implNote id is auto generated
    * @param input as {@link RequestBody}
@@ -214,7 +221,16 @@ public class UsersResources {
           Constants.TRANSACTION_FAILED);
       throw new RecordNotFoundException(String.format("User with id %s doesn't exist.", id));
     }
+    //will authenticate the user first before updating the details
+    //password is the current or old password that will be used to authenticate user before update
+    authenticationService.authenticateUser(user.getUsername(), user.getPassword());
 
+    //get the password as plain text first
+    //new password is the field for updated password
+    user.setPlainPassword(user.getNewPassword());
+    //here the password will be decoded.
+    String encodedPassword = authenticationService.updatePasswordForAccountUpdate(user.getNewPassword());
+    user.setPassword(encodedPassword);
     user.setId(id);
     usersRepository.save(user);
     var response = getResponse(user, HttpStatus.OK.value(),

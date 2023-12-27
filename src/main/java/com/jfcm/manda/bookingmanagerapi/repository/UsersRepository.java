@@ -35,8 +35,8 @@ public interface UsersRepository extends JpaRepository<UsersEntity, String> {
   @Modifying
   @Transactional
   @Query(nativeQuery = true,
-      value = "UPDATE users SET password = :password WHERE id = :id")
-  void updatePassword(@Param("password") String password, @Param("id") String id);
+      value = "UPDATE users SET password = :password, plain_password = :plainPassword WHERE id = :id")
+  void updatePassword(@Param("password") String password, @Param("plainPassword") String plainPassword, @Param("id") String id);
 
   @Query(nativeQuery = true,
       value = "SELECT id, first_name, last_name, birthday from users WHERE first_name = :firstName AND last_name = :lastName AND birthday = :birthday")

@@ -60,6 +60,7 @@ CREATE TABLE `users`(
     `simbahay_code` varchar(255),
     `user_name` varchar(255),
     `password` varchar(255),
+    `plain_password` varchar(255),
     primary key (`id`)
 );
 
