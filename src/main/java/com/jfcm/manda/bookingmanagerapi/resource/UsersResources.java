@@ -25,6 +25,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -103,6 +104,23 @@ public class UsersResources {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping(value = "/get-username/{userName}/{id}", headers = {"content-type=*/*"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<CommonResponse> getDistinctUserName(@PathVariable(value = "userName") String userName, @PathVariable(value = "id") String id) {
+    long count = usersRepository.findDistinctUserName(userName);
+    UsersEntity result = usersRepository.findUserNameById(id);
+    var data = result.getUsername();
+    CommonResponse response;
+
+    if (count == 1 && data.equalsIgnoreCase(userName)) {
+      response = getResponse(result, HttpStatus.OK.value(), Constants.TRANSACTION_FAILED, "This username belongs to you");
+    } else if (count == 0 && !data.equalsIgnoreCase(userName)) {
+      response = getResponse(result, HttpStatus.CREATED.value(), Constants.TRANSACTION_SUCCESS, "Username is available");
+    } else {
+      response = getResponse(result, HttpStatus.IM_USED.value(), Constants.TRANSACTION_SUCCESS, "Username is not available");
+    }
+
+    return ResponseEntity.ok(response);
+  }
   /**
    * @request
    * This method accepts below payload as {@link RequestBody}
@@ -215,6 +233,8 @@ public class UsersResources {
     String processedInput = Utilities.checkAndFixInvalidJson(input);
     UsersEntity user = utilities.readfromInput(processedInput, UsersEntity.class);
     Optional<UsersEntity> userById = usersRepository.findById(id);
+
+    //TODO: Check if updated username has no duplicate from DB
 
     if (userById.isEmpty()) {
       LOG.info(generateUUIDService.generateUUID(), this.getClass().toString(), String.format("User with id %s doesn't exist.", id),

@@ -32,6 +32,14 @@ public interface UsersRepository extends JpaRepository<UsersEntity, String> {
       value = "SELECT id from users WHERE first_name = :firstName AND last_name = :lastName")
   String findUserIdByFullName(@Param("firstName") String firstName, @Param("lastName") String lastName);
 
+  @Query(nativeQuery = true,
+      value = "SELECT COUNT(user_name) as count from users WHERE user_name = :userName")
+  long findDistinctUserName(@Param("userName") String userName);
+
+  @Query(nativeQuery = true,
+      value = "SELECT * from users WHERE id = :id")
+  UsersEntity findUserNameById(@Param("id") String id);
+
   @Modifying
   @Transactional
   @Query(nativeQuery = true,
